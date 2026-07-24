@@ -1,0 +1,53 @@
+{
+  "name": "nodeflow-framework",
+  "version": "1.0.0",
+  "description": "High-Performance, Developer-Friendly Express.js MVC Framework for Node.js",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atifsoftware/NodeFlow.git"
+  },
+  "bugs": {
+    "url": "https://github.com/atifsoftware/NodeFlow/issues"
+  },
+  "homepage": "https://github.com/atifsoftware/NodeFlow#readme",
+  "keywords": [
+    "express",
+    "mvc",
+    "framework",
+    "laravel-like",
+    "query-builder",
+    "mysql",
+    "ejs",
+    "swagger",
+    "websockets"
+  ],
+  "author": "Atif Software",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "compression": "^1.8.1",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-fileupload": "^1.5.2",
+    "express-rate-limit": "^8.5.2",
+    "express-session": "^1.18.0",
+    "helmet": "^8.2.0",
+    "jsonwebtoken": "^9.0.3",
+    "mysql2": "^3.9.7",
+    "session-file-store": "^1.5.0",
+    "sharp": "^0.34.5",
+    "socket.io": "^4.8.3",
+    "swagger-jsdoc": "^6.3.0",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}

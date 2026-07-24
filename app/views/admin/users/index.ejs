@@ -1,0 +1,561 @@
+<%- include('../../layouts/admin_header') %>
+
+<!-- Custom Premium Adaptive Aesthetics and Glassmorphism for User Management -->
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap');
+    
+    .users-page-container {
+        font-family: 'Hind Siliguri', 'Plus Jakarta Sans', system-ui, sans-serif;
+    }
+
+    .users-page-container .text-muted {
+        color: var(--text-muted) !important;
+    }
+
+    /* Universal Focus Override to prevent Bootstrap white-bg clashing */
+    .users-page-container .form-control:focus,
+    .users-page-container .form-select:focus {
+        color: var(--text-main) !important;
+        background-color: var(--input-focus-bg) !important;
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15) !important;
+    }
+
+    /* Glassmorphic Cards */
+    .stat-card-premium {
+        background: var(--bg-card) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 20px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: var(--shadow-premium);
+    }
+
+    .stat-card-premium::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 20px;
+        padding: 1px;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+
+    .stat-card-premium:hover {
+        transform: translateY(-5px);
+        background: var(--bg-secondary) !important;
+    }
+
+    /* Glow box shadow on card hovers */
+    .stat-card-premium.total:hover { box-shadow: 0 12px 30px rgba(99, 102, 241, 0.15); border-color: rgba(99, 102, 241, 0.25); }
+    .stat-card-premium.active:hover { box-shadow: 0 12px 30px rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.25); }
+    .stat-card-premium.suspended:hover { box-shadow: 0 12px 30px rgba(244, 63, 94, 0.15); border-color: rgba(244, 63, 94, 0.25); }
+    .stat-card-premium.admins:hover { box-shadow: 0 12px 30px rgba(6, 182, 212, 0.15); border-color: rgba(6, 182, 212, 0.25); }
+
+    /* Icons background wrapper */
+    .icon-wrapper-premium {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.35rem;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card-premium:hover .icon-wrapper-premium {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    /* Search & Filter bar premium design */
+    .search-bar-premium {
+        background: var(--bg-card) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 20px;
+        padding: 1.5rem;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+    }
+
+    .form-control-premium {
+        background-color: var(--input-bg) !important;
+        border: 1px solid var(--input-border) !important;
+        border-radius: 12px !important;
+        color: var(--text-main) !important;
+        padding: 0.75rem 1rem !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .form-control-premium::placeholder {
+        color: var(--text-muted) !important;
+        opacity: 0.65 !important;
+    }
+
+    .form-control-premium:focus {
+        color: var(--text-main) !important;
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15) !important;
+        background-color: var(--input-focus-bg) !important;
+    }
+
+    .input-group-text-premium {
+        background: var(--input-bg) !important;
+        border: 1px solid var(--input-border) !important;
+        border-right: none !important;
+        border-radius: 12px 0 0 12px !important;
+        color: var(--text-muted) !important;
+    }
+
+    .form-control-premium-with-icon {
+        border-left: none !important;
+        border-radius: 0 12px 12px 0 !important;
+    }
+
+    /* Glowing Status Badges */
+    .glow-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0.35rem 0.8rem;
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+        border: 1px solid transparent;
+        text-transform: capitalize;
+    }
+    
+    .glow-badge-success {
+        background: rgba(16, 185, 129, 0.1) !important;
+        color: #10b981 !important;
+        border-color: rgba(16, 185, 129, 0.2) !important;
+        box-shadow: 0 0 12px rgba(16, 185, 129, 0.05);
+    }
+    
+    .glow-badge-danger {
+        background: rgba(244, 63, 94, 0.1) !important;
+        color: #f43f5e !important;
+        border-color: rgba(244, 63, 94, 0.2) !important;
+        box-shadow: 0 0 12px rgba(244, 63, 94, 0.05);
+    }
+
+    .glow-badge-info {
+        background: rgba(14, 165, 233, 0.1) !important;
+        color: #0ea5e9 !important;
+        border-color: rgba(14, 165, 233, 0.2) !important;
+        box-shadow: 0 0 12px rgba(14, 165, 233, 0.05);
+    }
+
+    .glow-badge-secondary {
+        background: rgba(148, 163, 184, 0.1) !important;
+        color: var(--text-muted) !important;
+        border-color: var(--border-color) !important;
+    }
+</style>
+
+<!-- Feedback Toast Banner -->
+<div id="usersToast" 
+     style="position: fixed; bottom: 2rem; right: 2rem; z-index: 2000; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); border-radius: 12px; margin: 0; min-width: 320px; display: none; backdrop-filter: blur(10px);"
+     class="alert alert-success">
+</div>
+
+<div class="container-fluid py-4 users-page-container">
+    <!-- Header banner -->
+    <div class="row mb-4">
+        <div class="col-12 d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div>
+                <h1 class="premium-title mb-1" style="font-size: 2.25rem;">ব্যবহারকারী ব্যবস্থাপনা</h1>
+                <p class="text-muted mb-0" style="font-size: 0.95rem;">সিস্টেমের সক্রিয় ইউজার, ভূমিকা (Roles), পাসওয়ার্ড পরিবর্তন এবং স্ট্যাটাস স্থগিত বা সচল করুন।</p>
+            </div>
+            
+            <button type="button" class="btn btn-gradient-primary" data-bs-toggle="modal" data-bs-target="#userModal" onclick="openCreateModal()">
+                <i class="fas fa-user-plus me-2"></i> নতুন ব্যবহারকারী যোগ করুন
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Widget Cards Grid -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card-premium total p-4">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small d-block mb-1 font-sans">TOTAL USERS</span>
+                        <h3 class="fw-bold mb-0" style="color: var(--text-main); font-family: 'Plus Jakarta Sans', sans-serif;"><%= stats.total %></h3>
+                    </div>
+                    <div class="icon-wrapper-premium" style="background-color: rgba(99, 102, 241, 0.1); color: #818cf8;"><i class="fas fa-users"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card-premium active p-4">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small d-block mb-1 font-sans">ACTIVE USERS</span>
+                        <h3 class="fw-bold text-success mb-0" style="font-family: 'Plus Jakarta Sans', sans-serif;"><%= stats.active %></h3>
+                    </div>
+                    <div class="icon-wrapper-premium" style="background-color: rgba(16, 185, 129, 0.1); color: #34d399;"><i class="fas fa-user-check"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card-premium suspended p-4">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small d-block mb-1 font-sans">SUSPENDED</span>
+                        <h3 class="fw-bold text-danger mb-0" style="font-family: 'Plus Jakarta Sans', sans-serif;"><%= stats.suspended %></h3>
+                    </div>
+                    <div class="icon-wrapper-premium" style="background-color: rgba(244, 63, 94, 0.1); color: #fb7185;"><i class="fas fa-user-slash"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="stat-card-premium admins p-4">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small d-block mb-1 font-sans">SYSTEM ADMINS</span>
+                        <h3 class="fw-bold text-info mb-0" style="font-family: 'Plus Jakarta Sans', sans-serif;"><%= stats.admins %></h3>
+                    </div>
+                    <div class="icon-wrapper-premium" style="background-color: rgba(6, 182, 212, 0.1); color: #22d3ee;"><i class="fas fa-user-shield"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User List -->
+    <div class="table-container-premium">
+        <!-- Card Header Search and Actions -->
+        <div class="card-header border-0 p-4" style="background-color: var(--input-bg); opacity: 0.9; border-bottom: 1px solid var(--border-color) !important;">
+            <form action="/admin/users" method="GET" class="row g-3 align-items-center">
+                <div class="col-md-5">
+                    <div class="input-group">
+                        <span class="input-group-text input-group-text-premium"><i class="fas fa-search"></i></span>
+                        <input type="text" name="search" class="form-control form-control-premium form-control-premium-with-icon" placeholder="নাম বা ইমেইল দিয়ে খুঁজুন..." value="<%= search %>">
+                    </div>
+                </div>
+                <div class="col-md-2 col-6">
+                    <button type="submit" class="btn btn-outline-info rounded-pill px-4 w-100" style="border-width: 1.5px; font-weight: 600;"><i class="fas fa-filter me-1"></i> ফিল্টার</button>
+                </div>
+                <% if (search) { %>
+                    <div class="col-md-2 col-6">
+                        <a href="/admin/users" class="btn btn-outline-secondary rounded-pill px-4 w-100" style="border-width: 1.5px; font-weight: 600;"><i class="fas fa-redo-alt me-1"></i> রিসেট</a>
+                    </div>
+                <% } %>
+            </form>
+        </div>
+
+        <!-- Table View -->
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 table-borderless">
+                    <thead class="text-muted small text-uppercase fw-bold table-header-premium">
+                        <tr>
+                            <th class="ps-4 py-3">ইউজার আইডি</th>
+                            <th class="py-3">নাম ও ইমেইল</th>
+                            <th class="py-3">ব্যবহারকারী রোল</th>
+                            <th class="py-3">স্ট্যাটাস</th>
+                            <th class="py-3">তৈরির তারিখ</th>
+                            <th class="py-3 text-end pe-4">অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (users && users.length > 0) { %>
+                            <% users.forEach(u => { %>
+                                <tr>
+                                    <td class="ps-4 fw-bold" style="color: var(--text-muted); font-family: 'Plus Jakarta Sans', sans-serif;">#<%= u.get('id') %></td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="avatar-premium">
+                                                <%= u.get('name').charAt(0).toUpperCase() %>
+                                            </div>
+                                            <div>
+                                                <strong class="d-block" style="font-size: 1rem; color: var(--text-main);"><%= u.get('name') %></strong>
+                                                <span style="color: var(--text-muted); font-size: 0.85rem; font-family: 'Plus Jakarta Sans', sans-serif;"><%= u.get('email') %></span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <% if (u.get('role') === 'admin') { %>
+                                            <span class="glow-badge glow-badge-info"><i class="fas fa-user-shield"></i> Administrator</span>
+                                        <% } else { %>
+                                            <span class="glow-badge glow-badge-secondary"><i class="fas fa-user"></i> Staff Member</span>
+                                        <% } %>
+                                    </td>
+                                    <td>
+                                        <% if (parseInt(u.get('status')) === 1) { %>
+                                            <span class="glow-badge glow-badge-success"><i class="fas fa-circle" style="font-size: 6px;"></i> Active</span>
+                                        <% } else { %>
+                                            <span class="glow-badge glow-badge-danger"><i class="fas fa-ban"></i> Suspended</span>
+                                        <% } %>
+                                    </td>
+                                    <td style="color: var(--text-muted); font-size: 0.85rem; font-family: 'Plus Jakarta Sans', sans-serif;">
+                                        <%= formatDate(u.get('created_at'), 'YYYY-MM-DD HH:mm') %>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <div class="d-flex justify-content-end gap-2">
+                                            <button type="button" 
+                                                    class="btn-action-premium edit" 
+                                                    data-id="<%= u.get('id') %>"
+                                                    data-name="<%= u.get('name') %>"
+                                                    data-email="<%= u.get('email') %>"
+                                                    data-role="<%= u.get('role') %>"
+                                                    data-status="<%= u.get('status') %>"
+                                                    onclick="openEditModal(this.dataset)"
+                                                    title="সংশোধন">
+                                                <i class="fas fa-pen" style="font-size: 0.85rem;"></i>
+                                            </button>
+                                            
+                                            <% if (u.get('id') !== user.id) { %>
+                                                <button type="button" 
+                                                        class="btn-action-premium delete" 
+                                                        data-id="<%= u.get('id') %>"
+                                                        data-name="<%= u.get('name') %>"
+                                                        onclick="deleteUser(this.dataset.id, this.dataset.name)"
+                                                        title="ডিলিট">
+                                                    <i class="fas fa-trash-alt" style="font-size: 0.85rem;"></i>
+                                                </button>
+                                            <% } else { %>
+                                                <button type="button" 
+                                                        class="btn-action-premium" 
+                                                        style="opacity: 0.25; cursor: not-allowed;"
+                                                        disabled
+                                                        title="নিজের অ্যাকাউন্ট ডিলিট করা সম্ভব নয়">
+                                                    <i class="fas fa-trash-alt" style="font-size: 0.85rem;"></i>
+                                                </button>
+                                            <% } %>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    <i class="fas fa-users-slash fs-2 mb-3 d-block text-warning opacity-50"></i>
+                                    কোনো ব্যবহারকারী পাওয়া যায়নি।
+                                </td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <% if (paginationHtml) { %>
+            <div class="card-footer border-0 p-4" style="background-color: rgba(0, 0, 0, 0.02); border-top: 1px solid var(--border-color) !important;">
+                <div class="d-flex justify-content-center">
+                    <%- paginationHtml %>
+                </div>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<!-- Add/Edit User Modal -->
+<div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-content-premium">
+            <div class="modal-header modal-header-premium">
+                <h5 class="modal-title fw-bold" id="modalTitle" style="font-size: 1.25rem;">নতুন ব্যবহারকারী যোগ করুন</h5>
+                <button type="button" class="btn-close btn-close-premium" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body p-4">
+                <form id="userForm" autocomplete="off">
+                    <input type="hidden" id="user_id" name="id">
+                    
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold mb-2">পুরো নাম (Full Name) *</label>
+                        <input type="text" id="user_name" name="name" class="form-control modal-form-control" placeholder="যেমন: Rafiqul Islam" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold mb-2">ইমেইল ঠিকানা (Email Address) *</label>
+                        <input type="email" id="user_email" name="email" class="form-control modal-form-control" placeholder="user@nodeflow.com" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold mb-2" id="passwordLabel">পাসওয়ার্ড (Password) *</label>
+                        <input type="password" id="user_password" name="password" class="form-control modal-form-control" placeholder="সর্বনিম্ন ৬ অক্ষরের পাসওয়ার্ড">
+                        <div class="small text-muted mt-2" id="passwordHelp" style="display: none; font-size: 0.8rem;"><i class="fas fa-info-circle me-1"></i> পাসওয়ার্ড অপরিবর্তিত রাখতে চাইলে ঘরটি খালি রাখুন।</div>
+                    </div>
+
+                    <div class="row g-3 mt-1">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold mb-2">রোল (Role) *</label>
+                            <select id="user_role" name="role" class="form-select modal-form-select">
+                                <option value="staff">Staff Member</option>
+                                <option value="admin">Administrator</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold mb-2">স্ট্যাটাস (Status) *</label>
+                            <select id="user_status" name="status" class="form-select modal-form-select">
+                                <option value="1">Active</option>
+                                <option value="0">Suspended</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer modal-footer-premium">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" style="background-color: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);" data-bs-dismiss="modal">বাতিল করুন</button>
+                <button type="button" onclick="submitUserForm()" class="btn btn-gradient-primary rounded-pill px-4">সংরক্ষণ করুন</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let isEditMode = false;
+
+function showUsersToast(type, msg) {
+    const toast = document.getElementById('usersToast');
+    if (!toast) return;
+    toast.className = 'alert ' + (type === 'success' ? 'alert-success' : 'alert-danger');
+    toast.innerText = msg;
+    
+    // Smooth transition
+    toast.style.display = 'block';
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.3s ease';
+    setTimeout(() => {
+        toast.style.opacity = '1';
+    }, 10);
+         
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 300);
+    }, 3000);
+}
+
+function openCreateModal() {
+    isEditMode = false;
+    document.getElementById('modalTitle').innerText = 'নতুন ব্যবহারকারী যোগ করুন';
+    document.getElementById('userForm').reset();
+    document.getElementById('user_id').value = '';
+    
+    document.getElementById('user_password').required = true;
+    document.getElementById('passwordHelp').style.display = 'none';
+    document.getElementById('passwordLabel').innerText = 'পাসওয়ার্ড (Password) *';
+}
+
+function openEditModal(userObj) {
+    isEditMode = true;
+    document.getElementById('modalTitle').innerText = 'ব্যবহারকারী তথ্য সংশোধন';
+    document.getElementById('userForm').reset();
+    
+    document.getElementById('user_id').value = userObj.id;
+    document.getElementById('user_name').value = userObj.name;
+    document.getElementById('user_email').value = userObj.email;
+    document.getElementById('user_role').value = userObj.role;
+    document.getElementById('user_status').value = userObj.status;
+    
+    document.getElementById('user_password').required = false;
+    document.getElementById('passwordHelp').style.display = 'block';
+    document.getElementById('passwordLabel').innerText = 'নতুন পাসওয়ার্ড (ঐচ্ছিক)';
+    
+    // Open Bootstrap Modal
+    const modalEl = document.getElementById('userModal');
+    const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+    modal.show();
+}
+
+function submitUserForm() {
+    const name = document.getElementById('user_name').value.trim();
+    const email = document.getElementById('user_email').value.trim();
+    const password = document.getElementById('user_password').value;
+    const role = document.getElementById('user_role').value;
+    const status = document.getElementById('user_status').value;
+    const id = document.getElementById('user_id').value;
+
+    if (!name || !email || (!isEditMode && !password) || !role || !status) {
+        alert('অনুগ্রহ করে সবগুলো প্রয়োজনীয় ঘর সঠিকভাবে পূরণ করুন।');
+        return;
+    }
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
+    const url = isEditMode ? `/admin/users/${id}` : '/admin/users';
+    const method = isEditMode ? 'PUT' : 'POST';
+    
+    const payload = {
+        name,
+        email,
+        role,
+        status
+    };
+    
+    if (password && password.trim().length > 0) {
+        payload.password = password;
+    }
+
+    fetch(url, {
+        method,
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfToken
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(res => {
+        if (res.status === 'success') {
+            showUsersToast('success', res.message);
+            
+            // Hide bootstrap modal
+            const modalEl = document.getElementById('userModal');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            if (modal) modal.hide();
+            
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        } else {
+            showUsersToast('danger', res.message);
+        }
+    })
+    .catch(() => {
+        showUsersToast('danger', 'সার্ভারের সাথে যোগাযোগ করতে ব্যর্থ হয়েছে।');
+    });
+}
+
+function deleteUser(id, name) {
+    if (confirm(`আপনি কি নিশ্চিত যে "${name}" ব্যবহারকারীটিকে সিস্টেম থেকে চিরতরে ডিলিট করতে চান?`)) {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+        fetch(`/admin/users/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-Token': csrfToken
+            }
+        })
+        .then(response => response.json())
+        .then(res => {
+            if (res.status === 'success') {
+                showUsersToast('success', res.message);
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } else {
+                showUsersToast('danger', res.message);
+            }
+        })
+        .catch(() => {
+            showUsersToast('danger', 'সার্ভারে রিকোয়েস্ট পাঠাতে ব্যর্থ হয়েছে।');
+        });
+    }
+}
+</script>
+
+<%- include('../../layouts/admin_footer') %>

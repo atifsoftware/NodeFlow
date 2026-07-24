@@ -1,0 +1,239 @@
+<%- include('layouts/header') %>
+
+<!-- Prism Syntax Highlighting -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+
+<div class="row g-4 mb-5" x-data="{ section: 'intro', search: '' }">
+    <!-- Sidebar Navigation -->
+    <div class="col-lg-3">
+        <div class="card p-3 sticky-top" style="top: 90px; background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; backdrop-filter: blur(12px);">
+            <div class="mb-3">
+                <input type="text" x-model="search" placeholder="Search docs..." class="form-control" style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); color: white; border-radius: 10px; font-size: 0.85rem; font-family: 'Inter';">
+            </div>
+
+            <div class="nav flex-column nav-pills gap-1" style="font-family: 'Hind Siliguri', 'Inter'; font-size: 0.9rem;">
+                <a href="#intro" @click="section = 'intro'" :class="section === 'intro' ? 'active-doc-link' : 'doc-link'" class="nav-link text-start p-2 rounded-2 d-flex align-items-center gap-2">
+                    <i class="fas fa-rocket text-info" style="width: 18px;"></i> সূচনা ও ভূমিকা
+                </a>
+                <a href="#install" @click="section = 'install'" :class="section === 'install' ? 'active-doc-link' : 'doc-link'" class="nav-link text-start p-2 rounded-2 d-flex align-items-center gap-2">
+                    <i class="fas fa-download text-success" style="width: 18px;"></i> ইনস্টলেশন গাইড
+                </a>
+                <a href="#structure" @click="section = 'structure'" :class="section === 'structure' ? 'active-doc-link' : 'doc-link'" class="nav-link text-start p-2 rounded-2 d-flex align-items-center gap-2">
+                    <i class="fas fa-folder-tree text-warning" style="width: 18px;"></i> ফোল্ডার আর্কিটেকচার
+                </a>
+                <a href="#querybuilder" @click="section = 'querybuilder'" :class="section === 'querybuilder' ? 'active-doc-link' : 'doc-link'" class="nav-link text-start p-2 rounded-2 d-flex align-items-center gap-2">
+                    <i class="fas fa-database text-primary" style="width: 18px;"></i> Fluent Query Builder
+                </a>
+                <a href="#models" @click="section = 'models'" :class="section === 'models' ? 'active-doc-link' : 'doc-link'" class="nav-link text-start p-2 rounded-2 d-flex align-items-center gap-2">
+                    <i class="fas fa-cubes text-purple" style="width: 18px; color: #c084fc;"></i> Active Record Models
+                </a>
+                <a href="#auth" @click="section = 'auth'" :class="section === 'auth' ? 'active-doc-link' : 'doc-link'" class="nav-link text-start p-2 rounded-2 d-flex align-items-center gap-2">
+                    <i class="fas fa-shield-alt text-danger" style="width: 18px;"></i> Auth & RBAC Gates
+                </a>
+                <a href="#cli" @click="section = 'cli'" :class="section === 'cli' ? 'active-doc-link' : 'doc-link'" class="nav-link text-start p-2 rounded-2 d-flex align-items-center gap-2">
+                    <i class="fas fa-terminal text-light" style="width: 18px;"></i> CLI Artisan Tool
+                </a>
+                <a href="#queues" @click="section = 'queues'" :class="section === 'queues' ? 'active-doc-link' : 'doc-link'" class="nav-link text-start p-2 rounded-2 d-flex align-items-center gap-2">
+                    <i class="fas fa-tasks text-pink" style="width: 18px; color: #f472b6;"></i> WebSockets & Queues
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Body -->
+    <div class="col-lg-9">
+        <div class="card p-4 p-md-5" style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.4);">
+            
+            <!-- Section 1: Intro -->
+            <section id="intro" class="mb-5">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge bg-primary">v1.0.0 Documentation</span>
+                    <span class="badge bg-secondary">Express MVC Framework</span>
+                </div>
+                <h1 style="font-size: 2.5rem; font-weight: 800; color: #f8fafc; font-family: 'Inter', 'Hind Siliguri'; margin-bottom: 1.2rem;">
+                    NodeFlow Framework পরিচিতি
+                </h1>
+                <p style="color: #cbd5e1; font-size: 1.05rem; line-height: 1.8; font-family: 'Hind Siliguri';">
+                    <strong>NodeFlow</strong> হলো Node.js এবং Express.js দিয়ে তৈরি একটি দ্রুতগতির, সিকিউর এবং মডার্ন MVC ফ্রেমওয়ার্ক। PHP Laravel ফ্রেমওয়ার্কের জনপ্রিয় ফিচারের সুবিধাগুলো Node.js-এর নন-ব্লকিং অ্যাসিনক্রোনাস আর্কিটেকচারে নিয়ে আসাই এর মূল লক্ষ্য।
+                </p>
+
+                <div class="alert alert-info border-0 p-3 rounded-3" style="background: rgba(14, 165, 233, 0.12); border-left: 4px solid #0ea5e9 !important; color: #7dd3fc; font-family: 'Hind Siliguri'; font-size: 0.95rem;">
+                    <i class="fas fa-lightbulb me-2"></i> <strong>কেন NodeFlow বেছে নেবেন?</strong><br>
+                    NodeFlow-তে রয়েছে Fluent Chainable SQL Query Builder, Active Record ORM, CLI Generators (`node cli.js`), Dual Session/Bearer Authentication, fine-grained RBAC permissions এবং অটোমেটিক Swagger OpenAPI Specification Generator!
+                </div>
+            </section>
+
+            <!-- Section 2: Installation -->
+            <section id="install" class="mb-5">
+                <h2 style="font-size: 1.8rem; font-weight: 700; color: #f8fafc; font-family: 'Inter', 'Hind Siliguri'; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
+                    ⚡ ইনস্টলেশন ও সেটআপ (Installation)
+                </h2>
+
+                <h5 style="color: #e2e8f0; font-family: 'Inter'; font-weight: 600;">১. গিটহাব থেকে প্রজেক্ট ক্লোন করুন:</h5>
+                <pre><code class="language-bash">git clone https://github.com/atifsoftware/NodeFlow.git my-app
+cd my-app</code></pre>
+
+                <h5 style="color: #e2e8f0; font-family: 'Inter'; font-weight: 600;" class="mt-4">২. ডিপেন্ডেন্সি ইনস্টল করুন:</h5>
+                <pre><code class="language-bash">npm install</code></pre>
+
+                <h5 style="color: #e2e8f0; font-family: 'Inter'; font-weight: 600;" class="mt-4">৩. এনভায়রনমেন্ট ফাইল কনফিগারেশন (`.env`):</h5>
+                <pre><code class="language-bash">cp .env.example .env</code></pre>
+
+                <p style="color: #94a3b8; font-size: 0.95rem; font-family: 'Hind Siliguri';" class="mt-2">
+                    `.env` ফাইলে আপনার MySQL ডাটাবেজ তথ্য কনফিগার করুন:
+                </p>
+                <pre><code class="language-ini">PORT=3001
+APP_NAME=NodeFlow Framework
+APP_URL=http://localhost:3001
+
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASS=
+DB_NAME=nodeflow_db</code></pre>
+
+                <h5 style="color: #e2e8f0; font-family: 'Inter'; font-weight: 600;" class="mt-4">৪. ডাটাবেজ স্কিমা ইমপোর্ট & সার্ভার রান:</h5>
+                <pre><code class="language-bash"># Import database.sql into MySQL database (nodeflow_db)
+# Then launch dev server:
+npm run dev</code></pre>
+            </section>
+
+            <!-- Section 3: Directory Structure -->
+            <section id="structure" class="mb-5">
+                <h2 style="font-size: 1.8rem; font-weight: 700; color: #f8fafc; font-family: 'Inter', 'Hind Siliguri'; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
+                    📂 ফোল্ডার আর্কিটেকচার (Directory Structure)
+                </h2>
+
+                <pre><code class="language-json">NodeFlow/
+├── app/
+│   ├── controllers/      # Route Request Handling Controllers
+│   ├── core/             # Framework Core (Model, QueryBuilder, Gate, Cache)
+│   ├── jobs/             # Asynchronous Queue Jobs
+│   ├── middlewares/      # Express Route Middlewares (Auth, CSRF, RateLimit)
+│   ├── models/           # Active Record Models
+│   ├── services/         # Business Logic Layer
+│   └── views/            # EJS Page Templates & Layouts
+├── config/
+│   ├── db.js             # MySQL Connection Pool & Fluent Query Builder
+│   └── swagger.js        # Swagger OpenAPI 3.0 Document Generator
+├── database/
+│   ├── migrations/       # Schema Migrations
+│   └── seeders/          # Database Seeders
+├── public/               # Static Web Assets (CSS, JS, Uploads)
+├── routes/
+│   ├── api.js            # REST API Endpoints
+│   ├── auth.js           # Session Authentication Endpoints
+│   └── web.js            # Standard Web Views Endpoints
+├── cli.js                # Artisan Code Generator CLI Tool
+├── database.sql          # Base Framework SQL Schema
+├── db_guide.md           # Fluent Query Builder Documentation
+└── server.js             # Server Bootstrapper Entry Point</code></pre>
+            </section>
+
+            <!-- Section 4: Query Builder -->
+            <section id="querybuilder" class="mb-5">
+                <h2 style="font-size: 1.8rem; font-weight: 700; color: #f8fafc; font-family: 'Inter', 'Hind Siliguri'; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
+                    💾 Fluent Query Builder (`config/db.js`)
+                </h2>
+
+                <p style="color: #cbd5e1; font-size: 1rem; line-height: 1.7; font-family: 'Hind Siliguri';">
+                    NodeFlow-এর চেইনেবল কুয়েরি বিল্ডার আপনাকে নিরাপত্তা এবং গতি নিশ্চিত করে জটিল SQL লেখার সুবিধা প্রদান করে।
+                </p>
+
+                <h5 style="color: #e2e8f0; font-family: 'Inter'; font-weight: 600;" class="mt-4">মৌলিক কুয়েরি উদাহরণ:</h5>
+                <pre><code class="language-javascript">const DB = require('./config/db');
+
+// SELECT * FROM `users` WHERE `status` = 'active'
+const users = await DB.table('users')
+  .where('status', 'active')
+  .get();
+
+// SELECT `id`, `name` FROM `users` WHERE `id` = 5 LIMIT 1
+const user = await DB.table('users')
+  .select(['id', 'name'])
+  .where('id', 5)
+  .first();
+
+// Join Table Example
+const logs = await DB.table('activity_logs as l')
+  .join('users as u', 'l.user_id', '=', 'u.id')
+  .select(['l.*', 'u.name as user_name'])
+  .orderBy('l.id', 'DESC')
+  .get();</code></pre>
+            </section>
+
+            <!-- Section 5: Models -->
+            <section id="models" class="mb-5">
+                <h2 style="font-size: 1.8rem; font-weight: 700; color: #f8fafc; font-family: 'Inter', 'Hind Siliguri'; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
+                    📦 Active Record Models (`app/models/`)
+                </h2>
+
+                <p style="color: #cbd5e1; font-size: 1rem; line-height: 1.7; font-family: 'Hind Siliguri';">
+                    `Model` ক্লাসটি extend করে যেকোনো ডাটাবেজ টেবিলের সাথে অবজেক্ট অরিয়েন্টেড মডেল কানেক্ট করুন:
+                </p>
+
+                <pre><code class="language-javascript">const Model = require('../core/Model');
+
+class Product extends Model {
+  static table = 'products';
+  static primaryKey = 'id';
+  
+  // Define scope or helper
+  static async findBySku(sku) {
+    return await this.query().where('sku', sku).first();
+  }
+}
+
+module.exports = Product;</code></pre>
+            </section>
+
+            <!-- Section 6: CLI Generator -->
+            <section id="cli" class="mb-5">
+                <h2 style="font-size: 1.8rem; font-weight: 700; color: #f8fafc; font-family: 'Inter', 'Hind Siliguri'; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
+                    💻 NodeFlow CLI Code Generator (`cli.js`)
+                </h2>
+
+                <p style="color: #cbd5e1; font-size: 1rem; line-height: 1.7; font-family: 'Hind Siliguri';">
+                    ম্যানুয়ালি ফাইল না বানিয়ে CLI টুল দিয়ে দ্রুত কোড স্কেলিটন জেনারেট করুন:
+                </p>
+
+                <pre><code class="language-bash"># Create Controller
+node cli.js make:controller OrderController
+
+# Create Model
+node cli.js make:model Order
+
+# Create Migration
+node cli.js make:migration create_orders_table
+
+# Run Database Seeder
+node cli.js db:seed</code></pre>
+            </section>
+
+        </div>
+    </div>
+</div>
+
+<style>
+.doc-link {
+    color: #94a3b8;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+.doc-link:hover {
+    color: #0ea5e9;
+    background: rgba(14, 165, 233, 0.1);
+}
+.active-doc-link {
+    color: #f8fafc !important;
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(16, 185, 129, 0.2)) !important;
+    border: 1px solid rgba(14, 165, 233, 0.3) !important;
+    font-weight: 700 !important;
+}
+</style>
+
+<%- include('layouts/header') %>

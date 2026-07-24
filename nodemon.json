@@ -1,0 +1,12 @@
+{
+  "verbose": false,
+  "ignore": [
+    "public/uploads/**/*",
+    "sessions/**/*",
+    "scratch/**/*",
+    "tests/**/*",
+    "database/**/*",
+    "node_modules/**/*"
+  ],
+  "ext": "js,json,ejs,html,css"
+}

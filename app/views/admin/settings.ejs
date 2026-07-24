@@ -1,0 +1,272 @@
+<%- include('../layouts/admin_header') %>
+
+<!-- Custom Premium Adaptive Aesthetics for Settings Page -->
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap');
+    
+    .settings-page-container {
+        font-family: 'Hind Siliguri', 'Plus Jakarta Sans', system-ui, sans-serif;
+    }
+
+    .settings-page-container .text-muted {
+        color: var(--text-muted) !important;
+    }
+
+    /* Universal Focus Override */
+    .settings-page-container .form-control:focus {
+        color: var(--text-main) !important;
+        background-color: var(--input-focus-bg) !important;
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15) !important;
+    }
+
+    /* Glassmorphic Settings Panel */
+    .settings-card-premium {
+        background: var(--bg-card) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 24px;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: var(--shadow-premium);
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .settings-card-premium::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 24px;
+        padding: 1px;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+
+    .form-control-premium {
+        background-color: var(--input-bg) !important;
+        border: 1px solid var(--input-border) !important;
+        border-radius: 12px !important;
+        color: var(--text-main) !important;
+        padding: 0.75rem 1rem !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .form-control-premium::placeholder {
+        color: var(--text-muted) !important;
+        opacity: 0.65 !important;
+    }
+
+    .form-control-premium:focus {
+        color: var(--text-main) !important;
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15) !important;
+        background-color: var(--input-focus-bg) !important;
+    }
+
+    .input-group-text-premium {
+        background: var(--input-bg) !important;
+        border: 1px solid var(--input-border) !important;
+        border-right: none !important;
+        border-radius: 12px 0 0 12px !important;
+        color: var(--text-muted) !important;
+    }
+
+    .form-control-premium-with-icon {
+        border-left: none !important;
+        border-radius: 0 12px 12px 0 !important;
+    }
+
+    /* Tab styles */
+    .settings-tab-btn {
+        background: transparent;
+        border: 1px solid transparent;
+        color: var(--text-secondary);
+        font-family: 'Hind Siliguri';
+        font-weight: 600;
+        padding: 10px 20px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .settings-tab-btn:hover {
+        background: var(--bg-sidebar-hover);
+        color: var(--text-main);
+    }
+
+    .settings-tab-btn.active {
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.15) 0%, rgba(99, 102, 241, 0.15) 100%);
+        border: 1px solid rgba(14, 165, 233, 0.2);
+        color: #0ea5e9;
+    }
+
+    /* File preview styles */
+    .image-preview-box {
+        border: 1.5px dashed var(--border-color);
+        border-radius: 16px;
+        padding: 20px;
+        text-align: center;
+        background: rgba(15, 23, 42, 0.2);
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .image-preview-box:hover {
+        border-color: var(--primary);
+        background: rgba(15, 23, 42, 0.4);
+    }
+</style>
+
+<div class="container-fluid py-4 settings-page-container" x-data="{ activeTab: 'general' }">
+    <!-- Header banner -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="premium-title mb-1" style="font-size: 2.25rem;">সিস্টেম সেটিংস</h1>
+            <p class="text-muted mb-0" style="font-size: 0.95rem;">সাইটের নাম, কন্টাক্ট ইনফো, লোগো এবং আইকন সেটিংস পরিবর্তন করুন।</p>
+        </div>
+    </div>
+
+
+
+    <!-- Tabs controller -->
+    <div class="d-flex gap-2 mb-4">
+        <button class="settings-tab-btn" :class="activeTab === 'general' ? 'active' : ''" @click="activeTab = 'general'">
+            <i class="fas fa-cog"></i> সাধারণ তথ্য (General Info)
+        </button>
+        <button class="settings-tab-btn" :class="activeTab === 'media' ? 'active' : ''" @click="activeTab = 'media'">
+            <i class="fas fa-image"></i> ব্র্যান্ডিং ও মিডিয়া (Branding & Media)
+        </button>
+    </div>
+
+    <!-- Settings form -->
+    <form action="/admin/settings" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <!-- Tab 1: General Info -->
+        <div x-show="activeTab === 'general'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0">
+            <div class="settings-card-premium p-4">
+                <h4 style="color: #0ea5e9; font-weight: 700; font-size: 1.25rem; font-family: 'Hind Siliguri'; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
+                    <i class="fas fa-info-circle me-2"></i> প্রতিষ্ঠানের সাধারণ তথ্যাবলী
+                </h4>
+
+                <div class="row g-4">
+                    <!-- Name -->
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold mb-2">প্রতিষ্ঠানের নাম (Organization Name)</label>
+                        <input type="text" name="name" class="form-control form-control-premium" placeholder="NodeFlow Framework" value="<%= settings.name || '' %>" required>
+                    </div>
+
+                    <!-- Short Name -->
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold mb-2">সংক্ষিপ্ত নাম (Short Name)</label>
+                        <input type="text" name="short_name" class="form-control form-control-premium" placeholder="NodeFlow" value="<%= settings.short_name || '' %>" required>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold mb-2">ইমেইল ঠিকানা (Email Address)</label>
+                        <div class="input-group">
+                            <span class="input-group-text input-group-text-premium"><i class="fas fa-envelope"></i></span>
+                            <input type="email" name="email" class="form-control form-control-premium form-control-premium-with-icon" placeholder="info@nodeflow.com" value="<%= settings.email || '' %>">
+                        </div>
+                    </div>
+
+                    <!-- Mobile -->
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold mb-2">মোবাইল নম্বর (Mobile Number)</label>
+                        <div class="input-group">
+                            <span class="input-group-text input-group-text-premium"><i class="fas fa-phone"></i></span>
+                            <input type="text" name="mobile" class="form-control form-control-premium form-control-premium-with-icon" placeholder="01XXXXXXXXX" value="<%= settings.mobile || '' %>">
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="col-12">
+                        <label class="form-label small fw-bold mb-2">ঠিকানা (Address)</label>
+                        <textarea name="address" rows="3" class="form-control form-control-premium" placeholder="যেমন: ঢাকা, বাংলাদেশ"><%= settings.address || '' %></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Branding & Media -->
+        <div x-show="activeTab === 'media'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0" style="display: none;">
+            <div class="settings-card-premium p-4">
+                <h4 style="color: #10b981; font-weight: 700; font-size: 1.25rem; font-family: 'Hind Siliguri'; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.75rem; margin-bottom: 1.5rem;">
+                    <i class="fas fa-photo-video me-2"></i> লোগো এবং আইকন আপলোড
+                </h4>
+
+                <div class="row g-4">
+                    <!-- Logo Upload -->
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold mb-2">লোগো (Logo)</label>
+                        <div class="image-preview-box mb-3">
+                            <div class="mb-3">
+                                <% if (settings.logo) { %>
+                                    <img src="/<%= settings.logo %>" id="logo-preview" alt="Logo" style="max-height: 80px; object-fit: contain; border-radius: 8px; border: 1px solid var(--border-color);">
+                                <% } else { %>
+                                    <div id="logo-preview-placeholder" style="width: 80px; height: 80px; background: rgba(255,255,255,0.03); border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; border: 1px dashed var(--border-color);"><i class="fas fa-image text-muted"></i></div>
+                                    <img src="" id="logo-preview" alt="Logo" style="max-height: 80px; object-fit: contain; border-radius: 8px; display: none;">
+                                <% } %>
+                            </div>
+                            <input type="file" name="logo" id="logo-input" accept="image/*" class="form-control form-control-premium" onchange="previewImage(event, 'logo-preview', 'logo-preview-placeholder')">
+                            <div class="text-muted small mt-2"><i class="fas fa-info-circle me-1"></i> PNG বা SVG ফরম্যাট ব্যবহার করার সুপারিশ করা হচ্ছে।</div>
+                        </div>
+                    </div>
+
+                    <!-- Favicon Upload -->
+                    <div class="col-md-6">
+                        <label class="form-label small fw-bold mb-2">ফেভিকন আইকন (Favicon / Icon)</label>
+                        <div class="image-preview-box mb-3">
+                            <div class="mb-3">
+                                <% if (settings.favicon) { %>
+                                    <img src="/<%= settings.favicon %>" id="favicon-preview" alt="Favicon" style="width: 32px; height: 32px; object-fit: contain; border-radius: 4px; border: 1px solid var(--border-color);">
+                                <% } else { %>
+                                    <div id="favicon-preview-placeholder" style="width: 32px; height: 32px; background: rgba(255,255,255,0.03); border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; border: 1px dashed var(--border-color);"><i class="fas fa-cube text-muted"></i></div>
+                                    <img src="" id="favicon-preview" alt="Favicon" style="width: 32px; height: 32px; object-fit: contain; border-radius: 4px; display: none;">
+                                <% } %>
+                            </div>
+                            <input type="file" name="favicon" id="favicon-input" accept="image/*" class="form-control form-control-premium" onchange="previewImage(event, 'favicon-preview', 'favicon-preview-placeholder')">
+                            <div class="text-muted small mt-2"><i class="fas fa-info-circle me-1"></i> বর্গাকার সাইজের (১৬x১৬ বা ৩২x৩২) .ico বা .png ফরম্যাট ব্যবহার করুন।</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Button (Fixed / Visible across both tabs) -->
+        <div class="mt-4 d-flex justify-content-end">
+            <button type="submit" class="btn btn-gradient-primary rounded-pill px-5">
+                <i class="fas fa-save me-2"></i> সকল পরিবর্তন সংরক্ষণ করুন
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Live image preview helper
+    function previewImage(event, previewId, placeholderId) {
+        const reader = new FileReader();
+        reader.onload = function(){
+            const output = document.getElementById(previewId);
+            output.src = reader.result;
+            output.style.display = 'inline-block';
+            
+            const placeholder = document.getElementById(placeholderId);
+            if (placeholder) {
+                placeholder.style.display = 'none';
+            }
+        };
+        if(event.target.files[0]) {
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    }
+</script>
+
+<%- include('../layouts/admin_footer') %>

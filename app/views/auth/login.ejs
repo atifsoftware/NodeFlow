@@ -1,0 +1,65 @@
+<%- include('../layouts/header') %>
+
+    <div class="row justify-content-center animate-fade-in" style="margin-top: 3rem; margin-bottom: 5rem;">
+        <div class="col-md-5">
+            <div class="card"
+                style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.08); padding: 2.5rem; border-radius: 20px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);">
+                <div class="text-center mb-4">
+                    <div class="brand-icon mb-3"
+                        style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #0ea5e9, #10b981); display: inline-flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
+                        <i class="fas fa-lock"></i></div>
+                    <h3 style="font-weight: 700; color: white; font-family: 'Hind Siliguri';">অ্যাডমিন লগইন</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; font-family: 'Hind Siliguri';">আপনার
+                        ক্রেডেনশিয়াল ব্যবহার করে সিস্টেমে প্রবেশ করুন</p>
+                </div>
+
+                <!-- Flash notifications -->
+                <% if (locals.flash_error) { %>
+                    <div class="alert alert-danger"
+                        style="border-radius: 12px; font-size: 0.9rem; font-family: 'Hind Siliguri'; border-left: 4px solid #f43f5e; background: rgba(244, 63, 94, 0.1); color: #f43f5e;">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <%= flash_error %>
+                    </div>
+                    <% } %>
+
+                        <% if (locals.flash_success) { %>
+                            <div class="alert alert-success"
+                                style="border-radius: 12px; font-size: 0.9rem; font-family: 'Hind Siliguri'; border-left: 4px solid #10b981; background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                                <i class="fas fa-check-circle me-2"></i>
+                                <%= flash_success %>
+                            </div>
+                            <% } %>
+
+                                <form action="/login" method="POST"
+                                    style="display: flex; flex-direction: column; gap: 1.25rem;">
+                                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+                                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                        <label
+                                            style="color: #cbd5e1; font-weight: 600; font-size: 0.9rem; font-family: 'Hind Siliguri';">ইউজারনেম</label>
+                                        <input type="text" name="username" required placeholder="admin"
+                                            style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 0.75rem 1rem; border-radius: 10px; color: white; font-family: 'Inter'; outline: none;">
+                                    </div>
+
+                                    <div class="form-group" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                        <label
+                                            style="color: #cbd5e1; font-weight: 600; font-size: 0.9rem; font-family: 'Hind Siliguri';">পাসওয়ার্ড</label>
+                                        <input type="password" name="password" required placeholder="••••••••"
+                                            style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.1); padding: 0.75rem 1rem; border-radius: 10px; color: white; font-family: 'Inter'; outline: none;">
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary"
+                                        style="background: linear-gradient(135deg, #0ea5e9, #0284c7); border: none; padding: 0.8rem; border-radius: 10px; font-weight: 700; color: white; font-family: 'Hind Siliguri'; margin-top: 0.5rem; transition: opacity 0.2s;">লগইন
+                                        করুন</button>
+                                </form>
+
+                                <div class="text-center mt-4"
+                                    style="font-size: 0.85rem; color: var(--text-muted); font-family: 'Hind Siliguri';">
+                                    ডিফল্ট ডেমো ক্রেডেনশিয়াল: <br>
+                                    <strong>admin</strong> / <strong>admin123</strong>
+                                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../layouts/footer') %>

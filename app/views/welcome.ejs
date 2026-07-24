@@ -1,0 +1,314 @@
+<%- include('layouts/header') %>
+
+<!-- Prism.js CSS for Syntax Highlighting -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+
+<!-- Hero Section -->
+<div class="card animate-fade-in" style="background: radial-gradient(circle at 50% 20%, rgba(14, 165, 233, 0.15) 0%, rgba(15, 23, 42, 0.9) 70%); border: 1px solid rgba(255, 255, 255, 0.1); padding: 5rem 2rem; text-align: center; margin-bottom: 3.5rem; position: relative; overflow: hidden; border-radius: 28px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
+    <div style="position: absolute; width: 450px; height: 450px; background: rgba(14, 165, 233, 0.2); filter: blur(120px); top: -100px; left: 15%; border-radius: 50%; pointer-events: none;"></div>
+    <div style="position: absolute; width: 450px; height: 450px; background: rgba(16, 185, 129, 0.18); filter: blur(120px); bottom: -100px; right: 15%; border-radius: 50%; pointer-events: none;"></div>
+
+    <div style="position: relative; z-index: 10; max-width: 900px; margin: 0 auto;">
+        <div style="display: inline-flex; align-items: center; gap: 8px; padding: 0.5rem 1.25rem; border-radius: 30px; font-weight: 700; font-size: 0.82rem; letter-spacing: 0.5px; margin-bottom: 1.8rem; background: rgba(14, 165, 233, 0.12); color: #38bdf8; border: 1px solid rgba(14, 165, 233, 0.3); box-shadow: 0 0 20px rgba(14, 165, 233, 0.25);">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: #38bdf8; display: inline-block; animation: pulse 2s infinite;"></span>
+            <span>NodeFlow Framework v1.0.0 — Modern Express MVC</span>
+        </div>
+        
+        <h1 style="font-size: 3.5rem; font-weight: 800; line-height: 1.15; margin-bottom: 1.5rem; background: linear-gradient(135deg, #ffffff 40%, #cbd5e1 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: 'Inter', 'Hind Siliguri', sans-serif; letter-spacing: -1px;">
+            Node.js এর শক্তিতে <span style="background: linear-gradient(135deg, #0ea5e9, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Laravel-এর মতো Elegance</span>
+        </h1>
+        
+        <p style="color: #94a3b8; font-size: 1.2rem; line-height: 1.8; margin-bottom: 2.8rem; font-family: 'Hind Siliguri', sans-serif; font-weight: 400; max-width: 780px; margin-left: auto; margin-right: auto;">
+            NodeFlow হলো একটি আর্কিটেকচারালি রিচ Express MVC ফ্রেমওয়ার্ক। এতে অন্তর্নির্মিত রয়েছে Fluent Query Builder, Dual Auth (Session & Bearer Token), RBAC Gates, CLI Generators, Socket.io WebSockets, Queue Workers এবং Swagger OpenAPI specs!
+        </p>
+
+        <div style="display: flex; gap: 1.2rem; justify-content: center; flex-wrap: wrap;">
+            <a href="/docs" class="btn btn-primary" style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); border: none; font-weight: 700; padding: 0.9rem 2.2rem; border-radius: 14px; font-size: 1rem; font-family: 'Inter', 'Hind Siliguri'; box-shadow: 0 10px 25px -5px rgba(14, 165, 233, 0.4); display: inline-flex; align-items: center; gap: 10px; transition: transform 0.2s;">
+                <i class="fas fa-book-open"></i> ডকুমেন্টেশন দেখুন
+            </a>
+
+            <a href="https://github.com/atifsoftware/NodeFlow" target="_blank" class="btn btn-outline-light" style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.15); color: #f8fafc; font-weight: 600; padding: 0.9rem 2.2rem; border-radius: 14px; font-size: 1rem; font-family: 'Inter', 'Hind Siliguri'; display: inline-flex; align-items: center; gap: 10px; backdrop-filter: blur(8px);">
+                <i class="fab fa-github"></i> GitHub Repository
+            </a>
+
+            <a href="/api/docs" target="_blank" class="btn btn-outline-light" style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255, 255, 255, 0.15); color: #f8fafc; font-weight: 600; padding: 0.9rem 2.2rem; border-radius: 14px; font-size: 1rem; font-family: 'Inter', 'Hind Siliguri'; display: inline-flex; align-items: center; gap: 10px; backdrop-filter: blur(8px);">
+                <i class="fas fa-code"></i> API Specs Explore
+            </a>
+
+            <% if (user) { %>
+                <a href="/admin/dashboard" class="btn btn-success" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; font-weight: 700; padding: 0.9rem 2.2rem; border-radius: 14px; font-size: 1rem; font-family: 'Hind Siliguri'; box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4); display: inline-flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-tachometer-alt"></i> ড্যাশবোর্ড
+                </a>
+            <% } else { %>
+                <a href="/login" class="btn btn-outline-primary" style="background: rgba(14, 165, 233, 0.1); border: 1px solid rgba(14, 165, 233, 0.3); color: #38bdf8; font-weight: 700; padding: 0.9rem 2.2rem; border-radius: 14px; font-size: 1rem; font-family: 'Hind Siliguri'; display: inline-flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-sign-in-alt"></i> এডমিন লগইন
+                </a>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<!-- Interactive Code & Architecture Showcase -->
+<div class="row g-4 mb-5 align-items-stretch" x-data="{ tab: 'query' }">
+    <div class="col-lg-5 d-flex flex-column justify-content-center">
+        <div style="padding-right: 1.5rem;">
+            <span style="color: #0ea5e9; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px; display: block; margin-bottom: 0.75rem;">Developer Experience First</span>
+            <h2 style="font-size: 2.2rem; font-weight: 800; color: #f8fafc; font-family: 'Inter', 'Hind Siliguri'; line-height: 1.25; margin-bottom: 1.2rem;">
+                লারাভেলের মতো এলিগ্যান্ট কুয়েরি ও মডিউলার আর্কিটেকচার
+            </h2>
+            <p style="color: #94a3b8; font-size: 1.05rem; line-height: 1.7; font-family: 'Hind Siliguri'; margin-bottom: 1.8rem;">
+                SQL-এর জটিলতা ভুলে সহজে চেইনেবল পদ্ধতি ব্যবহার করে ডেটাবেজ অপারেশন সামলান। Fluent Query Builder এবং Active Record ORM আপনার ডেটা অ্যাক্সেসকে করে তুলবে সুরক্ষিত ও সংক্ষিপ্ত।
+            </p>
+
+            <div class="d-flex flex-column gap-3">
+                <button @click="tab = 'query'" :class="tab === 'query' ? 'btn-tab-active' : 'btn-tab'" class="btn text-start p-3 rounded-3 transition-all" style="border: 1px solid rgba(255,255,255,0.08); background: rgba(30,41,59,0.4); color: white;">
+                    <div class="d-flex align-items-center gap-3">
+                        <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(14,165,233,0.15); display: flex; align-items: center; justify-content: center; color: #0ea5e9;"><i class="fas fa-database"></i></div>
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.95rem;">Fluent Query Builder</div>
+                            <div style="font-size: 0.8rem; color: #94a3b8;">Laravel Query Builder inspired syntax for MySQL</div>
+                        </div>
+                    </div>
+                </button>
+
+                <button @click="tab = 'model'" :class="tab === 'model' ? 'btn-tab-active' : 'btn-tab'" class="btn text-start p-3 rounded-3 transition-all" style="border: 1px solid rgba(255,255,255,0.08); background: rgba(30,41,59,0.4); color: white;">
+                    <div class="d-flex align-items-center gap-3">
+                        <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(16,185,129,0.15); display: flex; align-items: center; justify-content: center; color: #10b981;"><i class="fas fa-cube"></i></div>
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.95rem;">Active Record Model</div>
+                            <div style="font-size: 0.8rem; color: #94a3b8;">Models with relationship mapping & auto password hashing</div>
+                        </div>
+                    </div>
+                </button>
+
+                <button @click="tab = 'cli'" :class="tab === 'cli' ? 'btn-tab-active' : 'btn-tab'" class="btn text-start p-3 rounded-3 transition-all" style="border: 1px solid rgba(255,255,255,0.08); background: rgba(30,41,59,0.4); color: white;">
+                    <div class="d-flex align-items-center gap-3">
+                        <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(245,158,11,0.15); display: flex; align-items: center; justify-content: center; color: #f59e0b;"><i class="fas fa-terminal"></i></div>
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.95rem;">CLI Code Generators</div>
+                            <div style="font-size: 0.8rem; color: #94a3b8;">Artisan-like generator CLI tool (`node cli.js`)</div>
+                        </div>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Code Display Window -->
+    <div class="col-lg-7">
+        <div class="card h-100" style="background: #0f172a; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 18px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.6);">
+            <!-- Window Titlebar -->
+            <div class="d-flex justify-content-between align-items-center px-4 py-3" style="background: rgba(30, 41, 59, 0.8); border-bottom: 1px solid rgba(255, 255, 255, 0.08);">
+                <div class="d-flex align-items-center gap-2">
+                    <span style="width: 12px; height: 12px; border-radius: 50%; background: #ef4444; display: inline-block;"></span>
+                    <span style="width: 12px; height: 12px; border-radius: 50%; background: #f59e0b; display: inline-block;"></span>
+                    <span style="width: 12px; height: 12px; border-radius: 50%; background: #10b981; display: inline-block;"></span>
+                </div>
+                <span style="font-family: 'Fira Code', monospace; font-size: 0.82rem; color: #94a3b8;" x-text="tab === 'query' ? 'config/db.js (QueryBuilder)' : (tab === 'model' ? 'app/models/User.js' : 'terminal CLI execution')"></span>
+                <span class="badge bg-secondary opacity-75" style="font-family: 'Fira Code', monospace; font-size: 0.7rem;">NodeFlow v1.0</span>
+            </div>
+
+            <!-- Code Snippet Container -->
+            <div class="p-3" style="font-family: 'Fira Code', monospace; font-size: 0.88rem; overflow-x: auto;">
+                <!-- Tab 1: Query Builder -->
+                <div x-show="tab === 'query'">
+                    <pre class="m-0"><code class="language-javascript">const DB = require('./config/db');
+
+// 1. Fluent Chainable Select Query
+const activeUsers = await DB.table('users')
+  .select(['id', 'name', 'email', 'role'])
+  .where('status', 'active')
+  .whereIn('role', ['admin', 'manager'])
+  .orderBy('id', 'DESC')
+  .limit(10)
+  .get();
+
+// 2. Database Transactions Support
+await DB.transaction(async (trx) => {
+  await trx.table('users').where('id', 1).update({ status: 'active' });
+  await trx.table('activity_logs').insert({
+    action: 'USER_ACTIVATED',
+    description: 'Admin activated user account'
+  });
+});</code></pre>
+                </div>
+
+                <!-- Tab 2: Model -->
+                <div x-show="tab === 'model'">
+                    <pre class="m-0"><code class="language-javascript">const Model = require('../core/Model');
+
+class User extends Model {
+  static table = 'users';
+  static primaryKey = 'id';
+  static hidden = ['password']; // Hidden from JSON output
+
+  // Custom static helper methods
+  static async findByEmail(email) {
+    return await this.query().where('email', email).first();
+  }
+
+  // Relations mapping
+  tokens() {
+    return this.hasMany(require('./PersonalAccessToken'), 'tokenable_id');
+  }
+}
+
+module.exports = User;</code></pre>
+                </div>
+
+                <!-- Tab 3: CLI -->
+                <div x-show="tab === 'cli'">
+                    <pre class="m-0"><code class="language-bash"># NodeFlow Artisan Generator CLI Usage
+$ node cli.js make:controller ProductController
+✔ Controller created successfully at app/controllers/ProductController.js
+
+$ node cli.js make:model Product
+✔ Model created successfully at app/models/Product.js
+
+$ node cli.js make:migration create_products_table
+✔ Migration created successfully at database/migrations/create_products_table.js
+
+$ node cli.js migrate
+✔ All pending database migrations executed successfully!</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 6 Core Framework Pillars Grid -->
+<div class="mb-5">
+    <div class="text-center mb-5">
+        <span style="color: #0ea5e9; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1.5px;">Core Feature Matrix</span>
+        <h2 style="font-size: 2.3rem; font-weight: 800; color: #f8fafc; font-family: 'Inter', 'Hind Siliguri'; margin-top: 0.4rem;">
+            এন্টারপ্রাইজ ফিচারস আউট-অফ-দ্য-বক্স
+        </h2>
+    </div>
+
+    <div class="row g-4">
+        <!-- Feature 1 -->
+        <div class="col-md-4">
+            <div class="card h-100 p-4 transition-all" style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 18px;">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(14, 165, 233, 0.15); color: #0ea5e9; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1.25rem;">
+                    <i class="fas fa-database"></i>
+                </div>
+                <h4 style="font-size: 1.2rem; font-weight: 700; color: #f8fafc; font-family: 'Hind Siliguri'; margin-bottom: 0.6rem;">Fluent Query Builder & ORM</h4>
+                <p style="color: #94a3b8; font-size: 0.92rem; line-height: 1.6; font-family: 'Hind Siliguri'; margin: 0;">
+                    Laravel Eloquent এবং Query Builder অনুপ্রাণিত চেইনেবল কুয়েরি ব্যাকঅ্যাক্সেস। ডাইনামিক ট্রানজেকশন এবং রিলেশনশিপ হ্যান্ডলিং।
+                </p>
+            </div>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="col-md-4">
+            <div class="card h-100 p-4 transition-all" style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 18px;">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(16, 185, 129, 0.15); color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1.25rem;">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h4 style="font-size: 1.2rem; font-weight: 700; color: #f8fafc; font-family: 'Hind Siliguri'; margin-bottom: 0.6rem;">Dual Auth & RBAC Gates</h4>
+                <p style="color: #94a3b8; font-size: 0.92rem; line-height: 1.6; font-family: 'Hind Siliguri'; margin: 0;">
+                    ওয়েবের জন্য Session Auth এবং API ক্লায়েন্টের জন্য Bearer Personal Access Tokens (Sanctum style) এবং সূক্ষ্ম পারমিশন প্রোটোকল।
+                </p>
+            </div>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="col-md-4">
+            <div class="card h-100 p-4 transition-all" style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 18px;">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1.25rem;">
+                    <i class="fas fa-terminal"></i>
+                </div>
+                <h4 style="font-size: 1.2rem; font-weight: 700; color: #f8fafc; font-family: 'Hind Siliguri'; margin-bottom: 0.6rem;">Artisan CLI Generator</h4>
+                <p style="color: #94a3b8; font-size: 0.92rem; line-height: 1.6; font-family: 'Hind Siliguri'; margin: 0;">
+                    `node cli.js` কমান্ড দিয়ে এক ক্লিকেই Controller, Model, Migration এবং Seeder স্কেলিটন জেনারেট করার কমান্ড-লাইন টুল।
+                </p>
+            </div>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="col-md-4">
+            <div class="card h-100 p-4 transition-all" style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 18px;">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(168, 85, 247, 0.15); color: #c084fc; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1.25rem;">
+                    <i class="fas fa-wifi"></i>
+                </div>
+                <h4 style="font-size: 1.2rem; font-weight: 700; color: #f8fafc; font-family: 'Hind Siliguri'; margin-bottom: 0.6rem;">Socket.io WebSockets Layer</h4>
+                <p style="color: #94a3b8; font-size: 0.92rem; line-height: 1.6; font-family: 'Hind Siliguri'; margin: 0;">
+                    রিয়েল-টাইম ব্রডকাস্টিং ইভেন্ট ও লাইভ নোটিফিকেশন সামলানোর জন্য বিল্ট-ইন Socket.io ব্রডকাস্ট ব্রিজ।
+                </p>
+            </div>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="col-md-4">
+            <div class="card h-100 p-4 transition-all" style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 18px;">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(236, 72, 153, 0.15); color: #f472b6; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1.25rem;">
+                    <i class="fas fa-tasks"></i>
+                </div>
+                <h4 style="font-size: 1.2rem; font-weight: 700; color: #f8fafc; font-family: 'Hind Siliguri'; margin-bottom: 0.6rem;">Queue Worker & Jobs</h4>
+                <p style="color: #94a3b8; font-size: 0.92rem; line-height: 1.6; font-family: 'Hind Siliguri'; margin: 0;">
+                    ভারী কম্পিউটেশন, ইমেইল সেন্ডিং ও ব্যাকগ্রাউন্ড টাস্ক প্রসেস করার জন্য অ্যাসিনক্রোনাস Queue Worker প্রসেসর।
+                </p>
+            </div>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="col-md-4">
+            <div class="card h-100 p-4 transition-all" style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 18px;">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(6, 182, 212, 0.15); color: #22d3ee; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1.25rem;">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h4 style="font-size: 1.2rem; font-weight: 700; color: #f8fafc; font-family: 'Hind Siliguri'; margin-bottom: 0.6rem;">Swagger OpenAPI Specification</h4>
+                <p style="color: #94a3b8; font-size: 0.92rem; line-height: 1.6; font-family: 'Hind Siliguri'; margin: 0;">
+                    সকল API এন্ডপয়েন্টের জন্য অটো-জেনারেটেড ইন্টারেক্টিভ Swagger UI টেক্সট ও ইন্টারফেস (`/api/docs`)।
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Terminal Quick Start Banner -->
+<div class="card p-4 p-md-5 mb-5 text-white" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; box-shadow: 0 20px 30px rgba(0,0,0,0.4);">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-6">
+            <span class="badge bg-primary mb-2" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;">QUICK START</span>
+            <h3 style="font-size: 1.8rem; font-weight: 800; font-family: 'Inter', 'Hind Siliguri';">আপনার নতুন প্রজেক্ট শুরু করতে ৩ মিনিট সময় লাগবে</h3>
+            <p style="color: #94a3b8; font-size: 0.95rem; line-height: 1.6; font-family: 'Hind Siliguri';" class="m-0">
+                GitHub থেকে ক্লোন করে যেকোনো Node.js প্রজেক্টের জন্য একটি সম্পূর্ণ স্কেলিটন ফ্রেমওয়ার্ক তৈরি করে ফেলুন।
+            </p>
+        </div>
+        <div class="col-lg-6">
+            <div style="background: #090d16; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1.25rem; font-family: 'Fira Code', monospace; font-size: 0.85rem; color: #38bdf8;">
+                <div class="mb-2"><span style="color: #64748b;"># 1. Clone repository</span></div>
+                <div class="mb-3" style="color: #f8fafc;">$ git clone https://github.com/atifsoftware/NodeFlow.git my-app</div>
+                <div class="mb-2"><span style="color: #64748b;"># 2. Install dependencies & launch dev server</span></div>
+                <div style="color: #f8fafc;">$ cd my-app && npm install && npm run dev</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.btn-tab {
+    opacity: 0.7;
+    transition: all 0.2s ease;
+}
+.btn-tab:hover {
+    opacity: 1;
+    background: rgba(30, 41, 59, 0.7) !important;
+}
+.btn-tab-active {
+    opacity: 1;
+    background: rgba(30, 41, 59, 0.9) !important;
+    border-color: #0ea5e9 !important;
+    box-shadow: 0 0 15px rgba(14, 165, 233, 0.25);
+}
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+</style>
+
+<%- include('layouts/footer') %>

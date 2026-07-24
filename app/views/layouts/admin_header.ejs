@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<%= csrfToken %>">
+    <title>
+        <%= typeof title !=='undefined' ? title.split(' — ')[0] + ' — ' + settingsMap.name : ' Admin Panel — ' + settingsMap.name %>
+    </title>
+    
+    <!-- Favicon Icon -->
+    <link rel="icon" type="image/x-icon" href="<%= settingsMap.favicon ? (settingsMap.favicon.startsWith('/') || settingsMap.favicon.startsWith('http') ? settingsMap.favicon : '/' + settingsMap.favicon) : '/favicon.ico' %>">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/admin.css">
+
+    <!-- HTMX Core Script (HTML-driven AJAX operations) -->
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <script>
+        // Transmit CSRF token globally in all HTMX requests
+        document.addEventListener('htmx:configRequest', (evt) => {
+            evt.detail.headers['X-CSRF-Token'] = '<%= csrfToken %>';
+        });
+    </script>
+    <!-- Alpine.js Core Script (Universal client reactivity) -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Theme Initializer script to prevent theme flash -->
+    <script>
+        const savedTheme = localStorage.getItem('admin-theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
+</head>
+
+<body>
+
+    <!-- Sidebar Overlay (Mobile) -->
+    <div class="adm-overlay" id="admOverlay" onclick="closeSidebar()"></div>
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="adm-sidebar" id="admSidebar">
+        <div class="adm-brand">
+            <a href="/admin/dashboard" class="text-decoration-none">
+                <div class="brand-logo" style="display: flex; align-items: center; gap: 10px;">
+                    <% if (settingsMap.logo) { %>
+                        <img src="/<%= settingsMap.logo %>" alt="Logo" style="height: 32px; max-width: 120px; object-fit: contain; border-radius: 4px;">
+                    <% } else { %>
+                        <div class="brand-logo-icon" style="flex-shrink: 0; width: 32px; height: 32px; border-radius: 6px; background: linear-gradient(135deg, #0ea5e9, #10b981); display: flex; align-items: center; justify-content: center; color: white;"><i class="fas fa-cubes"></i></div>
+                    <% } %>
+                    <div class="brand-text">
+                        <div class="brand-name" style="font-size: 20px; font-weight: 700; color: var(--text-sidebar-main);"><%= settingsMap.short_name || 'NodeFlow' %></div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- User Profile (Top) -->
+        <div class="sidebar-profile">
+            <div class="profile-avatar-wrapper">
+                <div class="profile-avatar">
+                    <%= (user && user.name) ? user.name.charAt(0).toUpperCase() : 'U' %>
+                </div>
+                <div class="status-dot"></div>
+            </div>
+            <div class="profile-details">
+                <div class="profile-name">
+                    <%= (user && user.name) ? user.name : 'User' %>
+                </div>
+                <div class="profile-status">
+                    <i class="fas fa-circle" style="font-size:6px; color:#10b981;"></i> Online
+                </div>
+            </div>
+        </div>
+
+        <nav class="adm-nav">
+            <!-- হোম -->
+            <div class="nav-section">
+                <a href="/admin/dashboard" class="nav-link-item <%= currentPath === '/admin/dashboard' ? 'active' : '' %>">
+                    <div class="nav-icon"><i class="fas fa-th-large"></i></div>
+                    হোম / ড্যাশবোর্ড
+                </a>
+                <% if (user && user.role === 'admin') { %>
+                <a href="/admin/users" class="nav-link-item <%= currentPath === '/admin/users' ? 'active' : '' %>">
+                    <div class="nav-icon"><i class="fas fa-users"></i></div>
+                    ইউজার ব্যবস্থাপনা
+                </a>
+                <a href="/admin/settings" class="nav-link-item <%= currentPath === '/admin/settings' ? 'active' : '' %>">
+                    <div class="nav-icon"><i class="fas fa-cog"></i></div>
+                    সেটিংস
+                </a>
+                <% } %>
+            </div>
+
+            <!-- ডেভেলপার গাইড এবং সেটিংস -->
+            <div class="nav-section">
+                <a href="/" class="nav-link-item">
+                    <div class="nav-icon"><i class="fas fa-home"></i></div>
+                    ওয়েবসাইট হোম
+                </a>
+                <a href="/logout" class="nav-link-item">
+                    <div class="nav-icon"><i class="fas fa-sign-out-alt"></i></div>
+                    লগআউট
+                </a>
+            </div>
+        </nav>
+
+        <!-- Sidebar Footer Actions -->
+        <div class="sidebar-footer-actions">
+            <a href="/logout" class="footer-action-link" title="লগআউট">
+                <i class="fas fa-power-off"></i> লগআউট
+            </a>
+        </div>
+    </aside>
+
+    <!-- ===== TOPBAR ===== -->
+    <div class="adm-topbar">
+        <button class="topbar-toggle" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="breadcrumb-adm">
+            <a href="/admin/dashboard" style="color:#94a3b8; text-decoration:none;">Admin</a>
+            <i class="fas fa-chevron-right" style="font-size:10px; margin: 0 8px;"></i>
+            <strong>
+                <%= typeof title !=='undefined' ? title.split(' — ')[0] : ' ড্যাশবোর্ড' %>
+            </strong>
+        </div>
+
+        <div class="topbar-actions">
+            <!-- Light / Dark Theme Toggle Button -->
+            <button id="themeToggleBtn" class="topbar-btn" onclick="toggleTheme()" title="থিম পরিবর্তন করুন">
+                <i id="themeToggleIcon" class="fas fa-moon"></i>
+            </button>
+            <div class="topbar-divider"></div>
+            <a href="/" class="topbar-site-link">
+                <i class="fas fa-external-link-alt"></i>
+                <span class="d-none d-md-inline">সাইট দেখুন</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('admin-theme', newTheme);
+
+            // Update toggle icon
+            const icon = document.getElementById('themeToggleIcon');
+            if (icon) {
+                icon.className = newTheme === 'light' ? 'fas fa-sun' : 'fas fa-moon';
+            }
+        }
+
+        // Sync icon on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', () => {
+            const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const icon = document.getElementById('themeToggleIcon');
+            if (icon) {
+                icon.className = theme === 'light' ? 'fas fa-sun' : 'fas fa-moon';
+            }
+        });
+    </script>
+
+    <!-- ===== CONTENT ===== -->
+    <div class="adm-content">
+        <div class="adm-page">
+            <!-- Global Flash Messages -->
+            <div class="container-fluid p-0">
+                <%- flash('success') %>
+                <%- flash('error') %>
+            </div>
