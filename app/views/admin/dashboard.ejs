@@ -3,37 +3,37 @@
 <div class="row g-4 mb-4">
     <!-- Users widget -->
     <div class="col-md-4">
-        <div class="card p-4" style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px;">
+        <div class="card p-4" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 18px; box-shadow: var(--shadow-premium);">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 style="color: var(--text-secondary); margin: 0; font-family: 'Hind Siliguri'; font-weight: 600;">মোট ব্যবহারকারী</h5>
-                <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(14, 165, 233, 0.1); color: #0ea5e9; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;"><i class="fas fa-users"></i></div>
+                <h5 style="color: var(--text-muted); margin: 0; font-family: 'Hind Siliguri'; font-weight: 600;">মোট ব্যবহারকারী</h5>
+                <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(14, 165, 233, 0.15); color: #0ea5e9; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;"><i class="fas fa-users"></i></div>
             </div>
-            <h2 style="color: white; font-weight: 800; font-family: 'Inter'; margin: 0;"><%= stats.usersCount %></h2>
-            <p style="color: var(--text-muted); font-size: 0.8rem; margin: 5px 0 0 0; font-family: 'Hind Siliguri';">সিস্টেমে নিবন্ধিত মোট অ্যাকাউন্টস</p>
+            <h2 style="color: var(--text-main); font-weight: 800; font-family: 'Inter'; margin: 0;"><%= stats.usersCount %></h2>
+            <p style="color: var(--text-muted); font-size: 0.82rem; margin: 6px 0 0 0; font-family: 'Hind Siliguri';">সিস্টেমে নিবন্ধিত মোট অ্যাকাউন্টস</p>
         </div>
     </div>
 
     <!-- API Tokens widget -->
     <div class="col-md-4">
-        <div class="card p-4" style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px;">
+        <div class="card p-4" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 18px; box-shadow: var(--shadow-premium);">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 style="color: var(--text-secondary); margin: 0; font-family: 'Hind Siliguri'; font-weight: 600;">সক্রিয় এপিআই টোকেন</h5>
-                <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(16, 185, 129, 0.1); color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;"><i class="fas fa-key"></i></div>
+                <h5 style="color: var(--text-muted); margin: 0; font-family: 'Hind Siliguri'; font-weight: 600;">সক্রিয় এপিআই টোকেন</h5>
+                <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(16, 185, 129, 0.15); color: #10b981; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;"><i class="fas fa-key"></i></div>
             </div>
-            <h2 style="color: white; font-weight: 800; font-family: 'Inter'; margin: 0;"><%= stats.tokensCount %></h2>
-            <p style="color: var(--text-muted); font-size: 0.8rem; margin: 5px 0 0 0; font-family: 'Hind Siliguri';">ব্যক্তিগত অ্যাক্সেস টোকেন সংখ্যা</p>
+            <h2 style="color: var(--text-main); font-weight: 800; font-family: 'Inter'; margin: 0;"><%= stats.tokensCount %></h2>
+            <p style="color: var(--text-muted); font-size: 0.82rem; margin: 6px 0 0 0; font-family: 'Hind Siliguri';">ব্যক্তিগত অ্যাক্সেস টোকেন সংখ্যা</p>
         </div>
     </div>
 
     <!-- Logs widget -->
     <div class="col-md-4">
-        <div class="card p-4" style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px;">
+        <div class="card p-4" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 18px; box-shadow: var(--shadow-premium);">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 style="color: var(--text-secondary); margin: 0; font-family: 'Hind Siliguri'; font-weight: 600;">মোট সিস্টেম লগস</h5>
-                <div style="width: 40px; height: 40px; border-radius: 10px; background: rgba(245, 158, 11, 0.1); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;"><i class="fas fa-history"></i></div>
+                <h5 style="color: var(--text-muted); margin: 0; font-family: 'Hind Siliguri'; font-weight: 600;">মোট সিস্টেম লগস</h5>
+                <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(245, 158, 11, 0.15); color: #f59e0b; display: flex; align-items: center; justify-content: center; font-size: 1.25rem;"><i class="fas fa-history"></i></div>
             </div>
-            <h2 style="color: white; font-weight: 800; font-family: 'Inter'; margin: 0;"><%= stats.logsCount %></h2>
-            <p style="color: var(--text-muted); font-size: 0.8rem; margin: 5px 0 0 0; font-family: 'Hind Siliguri';">মোট সংরক্ষিত ইউজার অ্যাক্টিভিটি</p>
+            <h2 style="color: var(--text-main); font-weight: 800; font-family: 'Inter'; margin: 0;"><%= stats.logsCount %></h2>
+            <p style="color: var(--text-muted); font-size: 0.82rem; margin: 6px 0 0 0; font-family: 'Hind Siliguri';">মোট সংরক্ষিত ইউজার অ্যাক্টিভিটি</p>
         </div>
     </div>
 </div>
@@ -41,56 +41,68 @@
 <div class="row g-4">
     <!-- Server stats -->
     <div class="col-md-6">
-        <div class="card p-4" style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; height: 100%;">
-            <h4 style="color: #0ea5e9; font-weight: 700; font-size: 1.25rem; font-family: 'Hind Siliguri'; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.75rem; margin-bottom: 1.5rem;"><i class="fas fa-server me-2"></i> সার্ভার এনভায়রনমেন্ট ডায়াগনস্টিক</h4>
+        <div class="card p-4" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 18px; height: 100%; box-shadow: var(--shadow-premium);">
+            <h4 style="color: #0ea5e9; font-weight: 700; font-size: 1.2rem; font-family: 'Hind Siliguri'; border-bottom: 1px solid var(--border-color); padding-bottom: 0.85rem; margin-bottom: 1.25rem;" class="d-flex align-items-center justify-content-between">
+                <span><i class="fas fa-server me-2" style="color: #0ea5e9;"></i> সার্ভার এনভায়রনমেন্ট ডায়াগনস্টিক</span>
+                <span class="badge" style="background: rgba(14, 165, 233, 0.15); color: #0ea5e9; font-size: 0.75rem; font-weight: 700; padding: 0.4rem 0.8rem; border-radius: 20px;">System Health</span>
+            </h4>
             
-            <table class="table table-borderless table-sm" style="color: #cbd5e1; font-size: 0.95rem; margin: 0;">
-                <tbody>
-                    <tr>
-                        <td style="padding: 0.5rem 0; font-family: 'Hind Siliguri'; font-weight: 600; color: #94a3b8; width: 40%;">অপারেটিং সিস্টেম</td>
-                        <td style="padding: 0.5rem 0; color: white;"><%= stats.osType %> (<%= stats.osRelease %>)</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 0.5rem 0; font-family: 'Hind Siliguri'; font-weight: 600; color: #94a3b8;">সিপিইউ মডেল</td>
-                        <td style="padding: 0.5rem 0; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 250px;" title="<%= stats.cpuModel %>"><%= stats.cpuModel %></td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 0.5rem 0; font-family: 'Hind Siliguri'; font-weight: 600; color: #94a3b8;">সিপিইউ কোর সংখ্যা</td>
-                        <td style="padding: 0.5rem 0; color: white;"><%= stats.cpuCores %> Cores</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 0.5rem 0; font-family: 'Hind Siliguri'; font-weight: 600; color: #94a3b8;">সার্ভার মেমরি ব্যবহার</td>
-                        <td style="padding: 0.5rem 0; color: white;"><%= stats.memoryUsage %></td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 0.5rem 0; font-family: 'Hind Siliguri'; font-weight: 600; color: #94a3b8;">সার্ভার আপটাইম</td>
-                        <td style="padding: 0.5rem 0; color: white;"><%= stats.uptime %></td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 0.5rem 0; font-family: 'Hind Siliguri'; font-weight: 600; color: #94a3b8;">Node.js ভার্সন</td>
-                        <td style="padding: 0.5rem 0; color: white; font-family: 'Inter'; font-weight: 600;"><%= stats.nodeVersion %></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.7rem 1rem; background: var(--bg-secondary); border-radius: 12px; border: 1px solid var(--border-color);">
+                    <span style="font-family: 'Hind Siliguri'; font-weight: 600; color: var(--text-muted); font-size: 0.9rem;"><i class="fas fa-desktop me-2" style="color: #38bdf8;"></i> অপারেটিং সিস্টেম</span>
+                    <span style="font-weight: 700; color: var(--text-main); font-family: 'Inter'; font-size: 0.9rem;"><%= stats.osType %> (<%= stats.osRelease %>)</span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.7rem 1rem; background: var(--bg-secondary); border-radius: 12px; border: 1px solid var(--border-color);">
+                    <span style="font-family: 'Hind Siliguri'; font-weight: 600; color: var(--text-muted); font-size: 0.9rem;"><i class="fas fa-microchip me-2" style="color: #a855f7;"></i> সিপিইউ মডেল</span>
+                    <span style="font-weight: 700; color: var(--text-main); font-family: 'Inter'; font-size: 0.85rem; max-width: 240px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;" title="<%= stats.cpuModel %>"><%= stats.cpuModel %></span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.7rem 1rem; background: var(--bg-secondary); border-radius: 12px; border: 1px solid var(--border-color);">
+                    <span style="font-family: 'Hind Siliguri'; font-weight: 600; color: var(--text-muted); font-size: 0.9rem;"><i class="fas fa-brain me-2" style="color: #f43f5e;"></i> সিপিইউ কোর সংখ্যা</span>
+                    <span style="font-weight: 700; color: var(--text-main); font-family: 'Inter'; font-size: 0.9rem;"><%= stats.cpuCores %> Cores</span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.7rem 1rem; background: var(--bg-secondary); border-radius: 12px; border: 1px solid var(--border-color);">
+                    <span style="font-family: 'Hind Siliguri'; font-weight: 600; color: var(--text-muted); font-size: 0.9rem;"><i class="fas fa-memory me-2" style="color: #eab308;"></i> মেমরি ব্যবহার</span>
+                    <span style="font-weight: 700; color: var(--text-main); font-family: 'Inter'; font-size: 0.9rem;"><%= stats.memoryUsage %></span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.7rem 1rem; background: var(--bg-secondary); border-radius: 12px; border: 1px solid var(--border-color);">
+                    <span style="font-family: 'Hind Siliguri'; font-weight: 600; color: var(--text-muted); font-size: 0.9rem;"><i class="fas fa-stopwatch me-2" style="color: #10b981;"></i> সার্ভার আপটাইম</span>
+                    <span style="font-weight: 700; color: var(--text-main); font-family: 'Inter'; font-size: 0.9rem;"><%= stats.uptime %></span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.7rem 1rem; background: var(--bg-secondary); border-radius: 12px; border: 1px solid var(--border-color);">
+                    <span style="font-family: 'Hind Siliguri'; font-weight: 600; color: var(--text-muted); font-size: 0.9rem;"><i class="fab fa-node-js me-2" style="color: #22c55e;"></i> Node.js ভার্সন</span>
+                    <span style="font-weight: 700; color: #10b981; font-family: 'Inter'; font-size: 0.9rem;"><%= stats.nodeVersion %></span>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Recent logs -->
     <div class="col-md-6">
-        <div class="card p-4" style="background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 16px; height: 100%;">
-            <h4 style="color: #10b981; font-weight: 700; font-size: 1.25rem; font-family: 'Hind Siliguri'; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.75rem; margin-bottom: 1.5rem;"><i class="fas fa-list-ul me-2"></i> সাম্প্রতিক অ্যাক্টিভিটি লগস</h4>
+        <div class="card p-4" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 18px; height: 100%; box-shadow: var(--shadow-premium);">
+            <h4 style="color: #10b981; font-weight: 700; font-size: 1.2rem; font-family: 'Hind Siliguri'; border-bottom: 1px solid var(--border-color); padding-bottom: 0.85rem; margin-bottom: 1.25rem;" class="d-flex align-items-center justify-content-between">
+                <span><i class="fas fa-list-ul me-2" style="color: #10b981;"></i> সাম্প্রতিক অ্যাক্টিভিটি লগস</span>
+                <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; font-size: 0.75rem; font-weight: 700; padding: 0.4rem 0.8rem; border-radius: 20px;">Real-time</span>
+            </h4>
             
             <% if (logs.length === 0) { %>
-                <div class="text-center text-muted py-4" style="font-family: 'Hind Siliguri';">কোনো অ্যাক্টিভিটি লগ পাওয়া যায়নি।</div>
+                <div class="text-center py-5" style="font-family: 'Hind Siliguri'; color: var(--text-muted);">
+                    <i class="fas fa-info-circle me-1" style="font-size: 1.5rem; display: block; margin-bottom: 0.5rem; opacity: 0.5;"></i>
+                    কোনো অ্যাক্টিভিটি লগ পাওয়া যায়নি।
+                </div>
             <% } else { %>
                 <div style="display: flex; flex-direction: column; gap: 0.75rem;">
                     <% logs.forEach(log => { %>
-                        <div class="p-3" style="background: rgba(15, 23, 42, 0.3); border: 1px solid rgba(255,255,255,0.03); border-radius: 10px;">
+                        <div class="p-3" style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px;">
                             <div class="d-flex justify-content-between align-items-center mb-1">
-                                <strong style="color: white; font-size: 0.9rem; font-family: 'Hind Siliguri';"><%= log.user_name %></strong>
-                                <small style="color: #94a3b8; font-size: 0.75rem;"><%= new Date(log.created_at).toLocaleString() %></small>
+                                <strong style="color: var(--text-main); font-size: 0.9rem; font-family: 'Hind Siliguri'; font-weight: 700;"><%= log.user_name %></strong>
+                                <small style="color: var(--text-muted); font-size: 0.75rem; font-weight: 600;"><%= new Date(log.created_at).toLocaleString() %></small>
                             </div>
-                            <div style="color: #cbd5e1; font-size: 0.85rem; font-family: 'Hind Siliguri';"><%= log.action %> — <%= log.description %></div>
+                            <div style="color: var(--text-muted); font-size: 0.85rem; font-family: 'Hind Siliguri';"><%= log.action %> — <%= log.description %></div>
                         </div>
                     <% }) %>
                 </div>
