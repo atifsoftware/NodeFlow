@@ -1,43 +1,4 @@
 ```
-# Dependencies
-node_modules/
-
-# Environment
-.env.local
-.env.*
-
-# Build artifacts
-dist/
-build/
-target/
-
-# Logs
-*.log
-
-# Temporary files
-*.tmp
-*.swp
-
-# Editors
-.vscode/
-.idea/
-
-# Python cache (if any Python files exist in project)
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Coverage reports
-coverage/
-htmlcov/
-.coverage
-
-# TypeScript build output
-*.js.map
-*.tsbuildinfo
-
-# OS generated files
-.DS_Store
-Thumbs.db
+# No build artifacts, dependencies, or temp files detected in changes
+# Only source/config files present (.md, .js)
 ```
