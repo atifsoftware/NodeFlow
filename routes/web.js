@@ -4,6 +4,7 @@ const HomeController = require('../app/controllers/HomeController');
 const AuthController = require('../app/controllers/AuthController');
 const UserController = require('../app/controllers/UserController');
 const SettingController = require('../app/controllers/SettingController');
+const BackupController = require('../app/controllers/BackupController');
 const { auth, guest, can } = require('../app/middlewares/auth');
 
 // Public routes
@@ -21,6 +22,13 @@ router.get('/admin/dashboard', auth, HomeController.adminDashboard);
 // Settings routes
 router.get('/admin/settings', auth, SettingController.index);
 router.post('/admin/settings', auth, SettingController.update);
+
+// Database Backup Management routes
+router.get('/admin/backups', auth, BackupController.index);
+router.post('/admin/backups/create', auth, BackupController.create);
+router.get('/admin/backups/download/:filename', auth, BackupController.download);
+router.post('/admin/backups/restore/:filename', auth, BackupController.restore);
+router.post('/admin/backups/delete/:filename', auth, BackupController.destroy);
 
 // User Management administrative routes
 router.get('/admin/users', auth, can('manage-users'), UserController.index);

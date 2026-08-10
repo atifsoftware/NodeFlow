@@ -47,6 +47,7 @@ function showMenu() {
   console.log("12. " + colors.yellow + "Launch Background Queue Worker (queue:work)" + colors.reset);
   console.log("13. " + colors.magenta + "Launch Interactive Tinker REPL (tinker)" + colors.reset);
   console.log("14. " + colors.cyan + "Run Automated Framework Tests (test)" + colors.reset);
+  console.log("15. " + colors.green + "Generate Database Backup (db:backup)" + colors.reset);
   console.log("0. " + colors.red + "Exit" + colors.reset);
   console.log("");
   
@@ -98,6 +99,9 @@ async function handleChoice(choice) {
       return;
     case '14':
       await runAutomatedTests();
+      break;
+    case '15':
+      await runDbBackup();
       break;
     case '0':
       console.log(colors.green + "\n✓ Goodbye From NodeFlow!\n" + colors.reset);
@@ -649,8 +653,61 @@ async function runAutomatedTests() {
   pause();
 }
 
+async function runDbBackup() {
+  console.log(colors.yellow + "\nGenerating complete database backup dump..." + colors.reset);
+  try {
+    const BackupService = require('./app/services/BackupService');
+    const result = await BackupService.createBackup();
+    console.log(colors.green + `✓ Backup generated successfully!` + colors.reset);
+    console.log(colors.cyan + `  File:     storage/backups/${result.filename}` + colors.reset);
+    console.log(colors.cyan + `  Size:     ${result.formattedSize}` + colors.reset);
+    console.log(colors.cyan + `  Tables:   ${result.tablesCount}` + colors.reset);
+    console.log(colors.cyan + `  Records:  ${result.totalRows}` + colors.reset);
+  } catch (error) {
+    console.log(colors.red + "✗ Backup failure: " + error.message + colors.reset);
+  }
+  pause();
+}
+
 // Kickstart CLI on execute
 if (require.main === module) {
-  printHeader();
-  showMenu();
+  const directArg = process.argv[2];
+  if (directArg) {
+    rl.close();
+    (async () => {
+      if (directArg === 'db:backup' || directArg === 'backup') {
+        const BackupService = require('./app/services/BackupService');
+        try {
+          const result = await BackupService.createBackup();
+          console.log(`✓ Backup created: storage/backups/${result.filename} (${result.formattedSize})`);
+          process.exit(0);
+        } catch (err) {
+          console.error(`✗ Backup failed:`, err.message);
+          process.exit(1);
+        }
+      } else if (directArg === 'db:seed') {
+        await runAllSeeders();
+        process.exit(0);
+      } else if (directArg === 'cache:clear') {
+        Cache.clear();
+        console.log('✓ Cache cleared.');
+        process.exit(0);
+      } else if (directArg === 'migrate' || directArg === 'db:migrate') {
+        const Migrator = require('./app/core/Migrator');
+        const migrator = new Migrator();
+        await migrator.run();
+        process.exit(0);
+      } else if (directArg === 'test') {
+        const TestRunner = require('./app/core/testRunner');
+        await TestRunner.runAll();
+        process.exit(0);
+      } else {
+        printHeader();
+        showMenu();
+      }
+    })();
+  } else {
+    printHeader();
+    showMenu();
+  }
 }

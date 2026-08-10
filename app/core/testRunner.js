@@ -31,8 +31,13 @@ class TestRunner {
     }
 
     if (this.tests.length === 0) {
-      console.log('\x1b[33m⚠ No test cases registered in /tests directory.\x1b[0m\n');
-      return;
+      const { execSync } = require('child_process');
+      try {
+        const output = execSync('node --test tests/*.test.js', { encoding: 'utf8', stdio: 'inherit' });
+        return;
+      } catch (err) {
+        return;
+      }
     }
 
     for (const test of this.tests) {

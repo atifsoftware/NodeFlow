@@ -13,6 +13,12 @@ yarn-error.log*
 # Session store files
 sessions/
 
+# Storage and logs
+storage/backups/*
+!storage/backups/.gitkeep
+storage/logs/*
+!storage/logs/.gitkeep
+
 # Temporary and upload files
 public/uploads/*
 !public/uploads/.gitkeep

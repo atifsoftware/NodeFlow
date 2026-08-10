@@ -1,0 +1,341 @@
+<%- include('../../layouts/admin_header') %>
+
+<style>
+    .backup-page-container {
+        font-family: 'Hind Siliguri', 'Plus Jakarta Sans', system-ui, sans-serif;
+    }
+
+    .backup-card-premium {
+        background: var(--bg-card) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: 20px;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: var(--shadow-premium);
+        transition: all 0.3s ease;
+    }
+
+    .stat-badge-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.35rem;
+    }
+
+    .backup-table {
+        color: var(--text-main);
+        vertical-align: middle;
+        margin-bottom: 0;
+    }
+
+    .backup-table thead th {
+        background: var(--bg-secondary);
+        color: var(--text-muted);
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid var(--border-color);
+        padding: 1rem 1.25rem;
+    }
+
+    .backup-table tbody tr {
+        border-bottom: 1px solid var(--border-color);
+        transition: all 0.2s ease;
+    }
+
+    .backup-table tbody tr:hover {
+        background: var(--bg-sidebar-hover);
+    }
+
+    .backup-table tbody td {
+        padding: 1.1rem 1.25rem;
+        border: none;
+    }
+
+    .btn-action-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--border-color);
+        background: var(--bg-secondary);
+        color: var(--text-main);
+        transition: all 0.2s ease;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+
+    .btn-action-icon:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-action-icon.download:hover {
+        background: rgba(14, 165, 233, 0.15);
+        color: #0ea5e9;
+        border-color: rgba(14, 165, 233, 0.4);
+    }
+
+    .btn-action-icon.restore:hover {
+        background: rgba(245, 158, 11, 0.15);
+        color: #f59e0b;
+        border-color: rgba(245, 158, 11, 0.4);
+    }
+
+    .btn-action-icon.delete:hover {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+        border-color: rgba(239, 68, 68, 0.4);
+    }
+</style>
+
+<div class="container-fluid py-4 backup-page-container">
+    <!-- Header banner -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <h1 class="premium-title mb-1" style="font-size: 2.25rem;">
+                <i class="fas fa-database me-2" style="color: #0ea5e9;"></i> ডাটাবেস ব্যাকআপ ম্যানেজার
+            </h1>
+            <p class="text-muted mb-0" style="font-size: 0.95rem;">
+                আপনার সিস্টেমের সম্পূর্ণ ডাটাবেস নিরাপদে <strong>ZIP / GZ সংকুচিত</strong> বা প্লেইন SQL ফরম্যাটে ব্যাকআপ তৈরি, ডাউনলোড ও রিস্টোর করুন।
+            </p>
+        </div>
+
+        <!-- Create Backup Button Options -->
+        <div class="d-flex gap-2 align-items-center">
+            <!-- GZIP ZIP Backup Form (Recommended) -->
+            <form action="/admin/backups/create" method="POST" id="backupZipForm" onsubmit="handleBackupSubmit(event, 'zip')">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="hidden" name="format" value="gzip">
+                <button type="submit" id="createZipBackupBtn" class="btn btn-gradient-primary rounded-pill px-4 py-2 d-flex align-items-center gap-2" style="box-shadow: 0 4px 20px rgba(14, 165, 233, 0.4); font-weight: 700;">
+                    <i class="fas fa-file-archive" id="btnZipIcon"></i>
+                    <span id="btnZipText">ZIP ব্যাকআপ তৈরি করুন (GZ)</span>
+                </button>
+            </form>
+
+            <!-- Plain SQL Option -->
+            <form action="/admin/backups/create" method="POST" id="backupSqlForm" onsubmit="handleBackupSubmit(event, 'sql')">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="hidden" name="format" value="sql">
+                <button type="submit" id="createSqlBackupBtn" class="btn btn-outline-secondary rounded-pill px-3 py-2 d-flex align-items-center gap-2" style="font-weight: 600;" title="সংকোচন ছাড়া আনকম্প্রেসড SQL ফাইল">
+                    <i class="fas fa-file-code" id="btnSqlIcon"></i>
+                    <span id="btnSqlText">Plain .SQL</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Diagnostic Statistics Cards -->
+    <div class="row g-4 mb-4">
+        <!-- DB Name & Tables -->
+        <div class="col-md-4">
+            <div class="backup-card-premium p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 style="color: var(--text-muted); margin: 0; font-weight: 600;">ডাটাবেস ও টেবিল সংখ্যা</h6>
+                    <div class="stat-badge-icon" style="background: rgba(14, 165, 233, 0.15); color: #0ea5e9;">
+                        <i class="fas fa-server"></i>
+                    </div>
+                </div>
+                <h3 style="color: var(--text-main); font-weight: 800; font-family: 'Inter'; margin: 0;">
+                    <%= dbStats.tablesCount %> <span style="font-size: 1rem; font-weight: 500; color: var(--text-muted);">টেবিল</span>
+                </h3>
+                <p style="color: var(--text-muted); font-size: 0.82rem; margin: 6px 0 0 0;">
+                    ডাটাবেস: <strong style="color: #0ea5e9;"><%= dbStats.dbName %></strong>
+                </p>
+            </div>
+        </div>
+
+        <!-- DB Size on Disk -->
+        <div class="col-md-4">
+            <div class="backup-card-premium p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 style="color: var(--text-muted); margin: 0; font-weight: 600;">ডাটাবেস সাইজ (Disk Usage)</h6>
+                    <div class="stat-badge-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+                        <i class="fas fa-hdd"></i>
+                    </div>
+                </div>
+                <h3 style="color: var(--text-main); font-weight: 800; font-family: 'Inter'; margin: 0;">
+                    <%= dbStats.formattedSize %>
+                </h3>
+                <p style="color: var(--text-muted); font-size: 0.82rem; margin: 6px 0 0 0;">
+                    মোট আনুমানিক রেকর্ড: <strong style="color: #10b981;"><%= dbStats.totalRows.toLocaleString() %></strong> টি
+                </p>
+            </div>
+        </div>
+
+        <!-- Total Backups Storage -->
+        <div class="col-md-4">
+            <div class="backup-card-premium p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 style="color: var(--text-muted); margin: 0; font-weight: 600;">সংরক্ষিত ব্যাকআপ ফাইল</h6>
+                    <div class="stat-badge-icon" style="background: rgba(168, 85, 247, 0.15); color: #a855f7;">
+                        <i class="fas fa-file-archive"></i>
+                    </div>
+                </div>
+                <h3 style="color: var(--text-main); font-weight: 800; font-family: 'Inter'; margin: 0;">
+                    <%= backups.length %> <span style="font-size: 1rem; font-weight: 500; color: var(--text-muted);">টি ফাইল</span>
+                </h3>
+                <p style="color: var(--text-muted); font-size: 0.82rem; margin: 6px 0 0 0;">
+                    মোট ব্যাকআপ স্পেস: <strong style="color: #a855f7;"><%= formattedTotalBackupSize %></strong>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Backups Table Card -->
+    <div class="backup-card-premium p-0 overflow-hidden">
+        <div class="p-4 d-flex justify-content-between align-items-center border-bottom" style="border-color: var(--border-color) !important;">
+            <h4 style="color: var(--text-main); font-weight: 700; font-size: 1.2rem; margin: 0;">
+                <i class="fas fa-history me-2" style="color: #0ea5e9;"></i> ব্যাকআপ হিস্টোরি ও ডাউনলোড
+            </h4>
+            <span class="badge" style="background: rgba(14, 165, 233, 0.15); color: #0ea5e9; font-size: 0.8rem; font-weight: 700; padding: 0.4rem 0.8rem; border-radius: 20px;">
+                <%= backups.length %> Available
+            </span>
+        </div>
+
+        <% if (backups.length === 0) { %>
+            <div class="text-center py-5">
+                <div style="width: 72px; height: 72px; background: rgba(14, 165, 233, 0.1); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #0ea5e9; font-size: 2rem; margin-bottom: 1rem;">
+                    <i class="fas fa-database"></i>
+                </div>
+                <h5 style="color: var(--text-main); font-weight: 700;">কোনো ব্যাকআপ ফাইল পাওয়া যায়নি</h5>
+                <p style="color: var(--text-muted); font-size: 0.9rem; max-width: 420px; margin: 0 auto 1.5rem auto;">
+                    আপনার ডাটাবেসের একটি নিরাপদ কপি সংরক্ষণ করতে উপরের "ZIP ব্যাকআপ তৈরি করুন" বাটনে ক্লিক করুন।
+                </p>
+            </div>
+        <% } else { %>
+            <div class="table-responsive">
+                <table class="table backup-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">#</th>
+                            <th>ফাইলের নাম</th>
+                            <th>টাইপ / ফরম্যাট</th>
+                            <th>ফাইলের সাইজ</th>
+                            <th>তৈরির সময়</th>
+                            <th class="text-end" style="width: 180px;">অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% backups.forEach((backup, index) => { %>
+                            <tr>
+                                <td style="color: var(--text-muted); font-weight: 600;"><%= index + 1 %></td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div style="width: 38px; height: 38px; border-radius: 10px; background: <%= backup.isCompressed ? 'rgba(16, 185, 129, 0.15)' : 'rgba(14, 165, 233, 0.15)' %>; color: <%= backup.isCompressed ? '#10b981' : '#0ea5e9' %>; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+                                            <i class="fas <%= backup.isCompressed ? 'fa-file-archive' : 'fa-file-code' %>"></i>
+                                        </div>
+                                        <div>
+                                            <div style="font-weight: 700; color: var(--text-main); font-family: 'Fira Code', monospace; font-size: 0.9rem;">
+                                                <%= backup.filename %>
+                                            </div>
+                                            <small style="color: var(--text-muted);">
+                                                <%= backup.isCompressed ? 'Gzip Compressed SQL Archive' : 'MySQL Plain Text SQL' %>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <% if (backup.isCompressed) { %>
+                                        <span class="badge" style="background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 8px;">
+                                            <i class="fas fa-file-zipper me-1"></i> GZ/ZIP Compressed
+                                        </span>
+                                    <% } else { %>
+                                        <span class="badge" style="background: rgba(14, 165, 233, 0.15); color: #0ea5e9; border: 1px solid rgba(14, 165, 233, 0.3); font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 8px;">
+                                            <i class="fas fa-code me-1"></i> Plain SQL
+                                        </span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <span class="badge" style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-main); font-family: 'Inter'; font-weight: 700; padding: 0.4rem 0.75rem; border-radius: 8px;">
+                                        <%= backup.formattedSize %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <div style="color: var(--text-main); font-weight: 600; font-size: 0.9rem;">
+                                        <%= backup.createdAtFormatted %>
+                                    </div>
+                                    <small style="color: var(--text-muted); font-size: 0.78rem;">
+                                        <i class="far fa-clock me-1"></i> <%= new Date(backup.createdAt).toLocaleTimeString() %>
+                                    </small>
+                                </td>
+                                <td class="text-end">
+                                    <div class="d-inline-flex gap-2">
+                                        <!-- Download Button -->
+                                        <a href="/admin/backups/download/<%= backup.filename %>" class="btn-action-icon download" title="ডাউনলোড করুন (<%= backup.extension %>)">
+                                            <i class="fas fa-download"></i>
+                                        </a>
+
+                                        <!-- Restore Button -->
+                                        <button type="button" class="btn-action-icon restore" title="রিস্টোর করুন" onclick="confirmRestore('<%= backup.filename %>')">
+                                            <i class="fas fa-undo-alt"></i>
+                                        </button>
+
+                                        <!-- Delete Button -->
+                                        <button type="button" class="btn-action-icon delete" title="মুছে ফেলুন" onclick="confirmDelete('<%= backup.filename %>')">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<!-- Hidden Restore Form -->
+<form id="restoreForm" method="POST" style="display: none;">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+</form>
+
+<!-- Hidden Delete Form -->
+<form id="deleteForm" method="POST" style="display: none;">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+</form>
+
+<script>
+    function handleBackupSubmit(e, type) {
+        const btnZip = document.getElementById('createZipBackupBtn');
+        const btnSql = document.getElementById('createSqlBackupBtn');
+        
+        btnZip.disabled = true;
+        btnSql.disabled = true;
+        btnZip.style.opacity = '0.75';
+        btnSql.style.opacity = '0.75';
+
+        if (type === 'zip') {
+            document.getElementById('btnZipIcon').className = 'fas fa-spinner fa-spin';
+            document.getElementById('btnZipText').innerText = 'ZIP ব্যাকআপ তৈরি হচ্ছে...';
+        } else {
+            document.getElementById('btnSqlIcon').className = 'fas fa-spinner fa-spin';
+            document.getElementById('btnSqlText').innerText = 'SQL তৈরি হচ্ছে...';
+        }
+    }
+
+    function confirmRestore(filename) {
+        if (confirm(`⚠️ সতর্কবার্তা!\n\nআপনি কি নিশ্চিত যে '${filename}' থেকে ডাটাবেস রিস্টোর করতে চান?\nএর ফলে বর্তমান সমস্ত টেবিল ও ডাটা এই ব্যাকআপ দিয়ে প্রতিস্থাপিত (Overwrite) হবে!`)) {
+            const form = document.getElementById('restoreForm');
+            form.action = `/admin/backups/restore/${encodeURIComponent(filename)}`;
+            form.submit();
+        }
+    }
+
+    function confirmDelete(filename) {
+        if (confirm(`আপনি কি নিশ্চিত যে '${filename}' ব্যাকআপ ফাইলটি মুছে ফেলতে চান?`)) {
+            const form = document.getElementById('deleteForm');
+            form.action = `/admin/backups/delete/${encodeURIComponent(filename)}`;
+            form.submit();
+        }
+    }
+</script>
+
+<%- include('../../layouts/admin_footer') %>
