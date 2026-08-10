@@ -2,9 +2,9 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * NodeFlow File-based Caching System
- * Inspired by NovaFlow PHP Cache library.
- * Stores cached data as JSON files in the storage/cache directory.
+ * NodeFlow Hybrid Caching System
+ * Supports both Redis (high-performance) and File-based (fallback) caching.
+ * Automatically uses Redis if available, otherwise falls back to file-based cache.
  */
 class Cache {
   /**
@@ -18,6 +18,33 @@ class Cache {
    * @type {number}
    */
   static defaultTtl = 3600;
+
+  /**
+   * Redis service instance (lazy loaded)
+   * @type {any}
+   */
+  static _redisService = null;
+
+  /**
+   * Check if Redis is available
+   * @returns {Promise<boolean>}
+   */
+  static async isRedisAvailable() {
+    try {
+      if (!this._redisService) {
+        // Try to load RedisService dynamically
+        try {
+          const redisModule = require('./RedisService');
+          this._redisService = redisModule.default || redisModule;
+        } catch (e) {
+          return false;
+        }
+      }
+      return this._redisService && this._redisService.isConnected();
+    } catch (e) {
+      return false;
+    }
+  }
 
   /**
    * Ensure cache directory exists
@@ -61,9 +88,23 @@ class Cache {
    * Get a cached value by key
    * @param {string} key
    * @param {*} [defaultValue=null] - Value to return if cache miss
-   * @returns {*}
+   * @returns {Promise<*>}
    */
-  static get(key, defaultValue = null) {
+  static async get(key, defaultValue = null) {
+    // Try Redis first
+    const redisAvailable = await this.isRedisAvailable();
+    if (redisAvailable) {
+      try {
+        const data = await this._redisService.get(`nodeflow:${key}`);
+        if (data !== null) {
+          return JSON.parse(data);
+        }
+      } catch (e) {
+        // Fall through to file cache
+      }
+    }
+
+    // Fallback to file-based cache
     this.init();
     const filePath = this._getFilePath(key);
 
@@ -85,10 +126,23 @@ class Cache {
    * @param {string} key
    * @param {*} value
    * @param {number} [ttl] - Time-to-live in seconds (defaults to 3600)
-   * @returns {boolean}
+   * @returns {Promise<boolean>}
    */
-  static set(key, value, ttl) {
+  static async set(key, value, ttl) {
     ttl = ttl || this.defaultTtl;
+    
+    // Try Redis first
+    const redisAvailable = await this.isRedisAvailable();
+    if (redisAvailable) {
+      try {
+        const stringValue = JSON.stringify(value);
+        return await this._redisService.set(`nodeflow:${key}`, stringValue, ttl);
+      } catch (e) {
+        // Fall through to file cache
+      }
+    }
+
+    // Fallback to file-based cache
     this.init();
     const filePath = this._getFilePath(key);
 
@@ -110,9 +164,19 @@ class Cache {
   /**
    * Check if a cache key exists and is valid
    * @param {string} key
-   * @returns {boolean}
+   * @returns {Promise<boolean>}
    */
-  static has(key) {
+  static async has(key) {
+    const redisAvailable = await this.isRedisAvailable();
+    if (redisAvailable) {
+      try {
+        return await this._redisService.exists(`nodeflow:${key}`);
+      } catch (e) {
+        // Fall through to file cache
+      }
+    }
+
+    // Fallback to file-based cache
     this.init();
     const filePath = this._getFilePath(key);
     return this._isValid(filePath);
@@ -121,25 +185,42 @@ class Cache {
   /**
    * Delete a cache entry
    * @param {string} key
-   * @returns {boolean}
+   * @returns {Promise<boolean>}
    */
-  static delete(key) {
+  static async delete(key) {
+    let deleted = false;
+
+    // Try Redis first
+    const redisAvailable = await this.isRedisAvailable();
+    if (redisAvailable) {
+      try {
+        deleted = await this._redisService.del(`nodeflow:${key}`);
+      } catch (e) {
+        // Continue to file cache
+      }
+    }
+
+    // Also delete from file cache
     const filePath = this._getFilePath(key);
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
-      return true;
+      deleted = true;
     }
-    return false;
+
+    return deleted;
   }
 
   /**
    * Clear all cached data
-   * @returns {number} Number of files removed
+   * @returns {Promise<number>} Number of files removed
    */
-  static clear() {
-    this.init();
+  static async clear() {
     let count = 0;
 
+    // Note: Redis flush requires SCAN which is not implemented yet
+    // For now, we only clear file cache
+    
+    this.init();
     try {
       const files = fs.readdirSync(this.cacheDir);
       for (const file of files) {
@@ -165,21 +246,21 @@ class Cache {
    * @returns {Promise<*>}
    */
   static async remember(key, ttl, callback) {
-    const cached = this.get(key);
+    const cached = await this.get(key);
     if (cached !== null) {
       return cached;
     }
 
     const value = await callback();
-    this.set(key, value, ttl);
+    await this.set(key, value, ttl);
     return value;
   }
 
   /**
    * Clean expired cache entries
-   * @returns {number} Number of expired files removed
+   * @returns {Promise<number>} Number of expired files removed
    */
-  static clean() {
+  static async clean() {
     this.init();
     let cleaned = 0;
 
@@ -203,9 +284,9 @@ class Cache {
 
   /**
    * Get cache statistics
-   * @returns {object} Stats including total files, total size, and expired count
+   * @returns {Promise<object>} Stats including total files, total size, and expired count
    */
-  static stats() {
+  static async stats() {
     this.init();
     let totalFiles = 0;
     let totalSize = 0;
