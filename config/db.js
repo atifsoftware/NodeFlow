@@ -21,6 +21,22 @@ let queryLogs = [];
 let slowQueryThresholdMs = 0;
 let slowQueryHandler = null;
 
+// Query Events listeners
+let queryEventListeners = {
+  querying: [],
+  queried: [],
+  error: []
+};
+
+// Cache Manager (optional Redis integration)
+let cacheManager = null;
+try {
+  const Cache = require('../app/core/Cache');
+  cacheManager = Cache;
+} catch (e) {
+  // Cache not available, will use memory-only fallback
+}
+
 // Whitelist of valid comparison operators to prevent SQL injection
 const VALID_OPERATORS = [
   '=', '<', '>', '<=', '>=', '<>', '!=', '<=>',
@@ -50,6 +66,9 @@ class QueryBuilder {
     this._lock = '';
     this._tableAlias = '';
     this._subqueryTable = null;
+    this._cacheTtl = null; // Cache TTL in seconds
+    this._useCache = false; // Enable query caching
+    this._cacheKey = null; // Custom cache key
   }
 
   /**
@@ -81,6 +100,9 @@ class QueryBuilder {
     qb._lock = this._lock;
     qb._tableAlias = this._tableAlias;
     qb._subqueryTable = this._subqueryTable ? { ...this._subqueryTable } : null;
+    qb._cacheTtl = this._cacheTtl;
+    qb._useCache = this._useCache;
+    qb._cacheKey = this._cacheKey;
     return qb;
   }
 
@@ -533,6 +555,61 @@ class QueryBuilder {
     return this;
   }
 
+  /**
+   * Enable query caching with optional TTL and custom key
+   * @param {number} ttl - Cache time-to-live in seconds (default: 3600)
+   * @param {string|null} key - Custom cache key (auto-generated if null)
+   */
+  cache(ttl = 3600, key = null) {
+    this._useCache = true;
+    this._cacheTtl = ttl;
+    this._cacheKey = key;
+    return this;
+  }
+
+  /**
+   * Disable query caching
+   */
+  withoutCache() {
+    this._useCache = false;
+    this._cacheTtl = null;
+    this._cacheKey = null;
+    return this;
+  }
+
+  /**
+   * Generate cache key from query SQL and bindings
+   */
+  _generateCacheKey() {
+    if (this._cacheKey) {
+      return `query:${this._cacheKey}`;
+    }
+    const sql = this.toSql();
+    const bindings = JSON.stringify(this.getBindings());
+    const hash = require('crypto').createHash('md5').update(sql + bindings).digest('hex');
+    return `query:${hash}`;
+  }
+
+  /**
+   * Register query event listener
+   */
+  static on(event, callback) {
+    if (!queryEventListeners[event]) {
+      throw new Error(`Invalid query event: ${event}. Valid events: querying, queried, error`);
+    }
+    queryEventListeners[event].push(callback);
+  }
+
+  /**
+   * Fire query event
+   */
+  async _fireEvent(event, data) {
+    const listeners = queryEventListeners[event] || [];
+    for (const callback of listeners) {
+      await callback(data);
+    }
+  }
+
   join(table, first, operator, second, type = 'INNER') {
     const escTable = this._parseTableName(table);
     if (typeof first === 'function') {
@@ -814,9 +891,39 @@ class QueryBuilder {
   }
 
   async get() {
+    // Check cache first if enabled
+    if (this._useCache && cacheManager) {
+      const cacheKey = this._generateCacheKey();
+      const cached = await cacheManager.get(cacheKey);
+      if (cached !== null) {
+        return cached;
+      }
+    }
+
     const sql = this.toSql();
     const bindings = this.getBindings();
-    return await this._query(sql, bindings);
+    
+    // Fire querying event
+    await this._fireEvent('querying', { sql, bindings });
+    
+    try {
+      const result = await this._query(sql, bindings);
+      
+      // Fire queried event
+      await this._fireEvent('queried', { sql, bindings, result });
+      
+      // Cache the result if enabled
+      if (this._useCache && cacheManager && this._cacheTtl) {
+        const cacheKey = this._generateCacheKey();
+        await cacheManager.set(cacheKey, result, this._cacheTtl);
+      }
+      
+      return result;
+    } catch (error) {
+      // Fire error event
+      await this._fireEvent('error', { sql, bindings, error });
+      throw error;
+    }
   }
 
   async first() {
@@ -995,6 +1102,106 @@ class QueryBuilder {
       lastId = lastRow[column];
       page++;
     }
+  }
+
+  /**
+   * Lazy loading iterator for large datasets (ES2018 async generator)
+   * Usage: for await (const row of DB.table('users').lazy(100)) { ... }
+   */
+  async * lazy(chunkSize = 100) {
+    let page = 1;
+    while (true) {
+      const rows = await this.clone().limit(chunkSize).offset((page - 1) * chunkSize).get();
+      if (rows.length === 0) break;
+      for (const row of rows) {
+        yield row;
+      }
+      if (rows.length < chunkSize) break;
+      page++;
+    }
+  }
+
+  /**
+   * Get results as a cursor for manual iteration
+   * Returns an object with next(), hasMore(), and close() methods
+   */
+  async cursor(chunkSize = 100) {
+    let page = 1;
+    let buffer = [];
+    let exhausted = false;
+
+    const fetchNextChunk = async () => {
+      if (exhausted) return [];
+      const rows = await this.clone().limit(chunkSize).offset((page - 1) * chunkSize).get();
+      if (rows.length === 0) {
+        exhausted = true;
+        return [];
+      }
+      page++;
+      return rows;
+    };
+
+    return {
+      async next() {
+        if (buffer.length === 0 && !exhausted) {
+          buffer = await fetchNextChunk();
+        }
+        if (buffer.length === 0) {
+          return { done: true, value: null };
+        }
+        return { done: false, value: buffer.shift() };
+      },
+      async hasMore() {
+        if (buffer.length > 0) return true;
+        if (exhausted) return false;
+        buffer = await fetchNextChunk();
+        return buffer.length > 0;
+      },
+      close() {
+        buffer = [];
+        exhausted = true;
+      }
+    };
+  }
+
+  /**
+   * Execute query in parallel chunks for improved performance
+   * @param {number} totalChunks - Number of parallel chunks to divide the query
+   * @param {string} column - Column to use for dividing chunks (default: primary key)
+   */
+  async parallelChunk(totalChunks = 4, column = 'id') {
+    // Get min and max values for the column
+    const minMax = await this.clone().selectRaw(`MIN(${column}) as min_val, MAX(${column}) as max_val`).first();
+    
+    if (!minMax || minMax.min_val === null || minMax.max_val === null) {
+      return [];
+    }
+
+    const minVal = minMax.min_val;
+    const maxVal = minMax.max_val;
+    const range = maxVal - minVal;
+    
+    if (range === 0 || totalChunks === 1) {
+      return await this.clone().get();
+    }
+
+    const chunkSize = Math.ceil(range / totalChunks);
+    const promises = [];
+
+    for (let i = 0; i < totalChunks; i++) {
+      const from = minVal + (i * chunkSize);
+      const to = i === totalChunks - 1 ? maxVal + 1 : from + chunkSize;
+      
+      promises.push(
+        this.clone()
+          .where(column, '>=', from)
+          .where(column, '<', to)
+          .get()
+      );
+    }
+
+    const results = await Promise.all(promises);
+    return results.flat();
   }
 
   async insert(data) {
@@ -1210,6 +1417,9 @@ const DB = {
   slowQuery: (thresholdMs, handler = null) => {
     slowQueryThresholdMs = thresholdMs;
     slowQueryHandler = handler;
+  },
+  on: (event, callback) => {
+    QueryBuilder.on(event, callback);
   }
 };
 
